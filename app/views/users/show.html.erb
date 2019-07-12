@@ -1,2 +1,52 @@
-<%= @user.name %>, <%= @user.email %>,
-<%= @user.department %>
+<% provide(:title, @user.name) %>
+<div>
+  <table class="table table-bordered table-condensed user-table">
+    <tr>
+      <td>時間管理表</td>
+      <td>指定勤務時間</td>
+      <td>基本時間</td>
+      <td>初日</td>
+    </tr>
+    <tr>
+      <td>所属：<%= @user.department.present? ? @user.department : "未設定" %></td>
+      <td>氏名：<%= @user.name %></td>
+      <td>出勤日数</td>
+      <td>締日</td>
+    </tr>
+  </table>
+</div>
+
+<table class="table table-striped table-bordered table-condensed user-table">
+  <thead>
+    <tr>
+      <th rowspan="2">日付</th>
+      <th rowspan="2">曜日</th>
+      <th colspan="3">出社</th>
+      <th colspan="3">退社</th>
+      <th rowspan="2">在社時間</th>
+      <th rowspan="2">備考</th>
+    </tr>
+    <tr>
+      <th>時</th>
+      <th>分</th>
+      <th></th>
+      <th>時</th>
+      <th>分</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>07/01</td>
+      <td>月</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

@@ -1,10 +1,22 @@
 <% provide(:title, 'ユーザー一覧') %>
 <h1>ユーザー一覧</h1>
 
-<%= will_paginate %>
-
-<ul class="users">
-  <%= render @users %>
-</ul>
-
-<%= will_paginate %>
+<div class="col-md-10 col-md-offset-1">
+  <%= will_paginate %>
+  <table class="table table-hover" id="table-users">
+    <thead></thead>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= link_to user.name, user %>
+          <% if current_user.admin? && !current_user?(user) %>
+              | <%= link_to "基本情報編集", "#" %>
+              | <%= link_to "削除", user, method: :delete,
+                                              data: { confirm: "削除しますか?" } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>          
+              
+  </table>
+  <%= will_paginate %>
+</div>

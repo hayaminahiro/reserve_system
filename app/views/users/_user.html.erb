@@ -1,8 +1,1 @@
-<li>
-  <%= user.name %>
-  <%= user.email %>
-  <% if current_user.admin? && !current_user?(user) %>
-    | <%= link_to "削除", user, method: :delete,
-                                  data: { confirm: "削除しますか?" } %>
-  <% end %>
-</li>
+
