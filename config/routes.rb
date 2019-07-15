@@ -11,5 +11,11 @@ Rails.application.routes.draw do
   
   # ログアウト
   delete '/logout', to: 'sessions#destroy'
+  
+  # 基本情報の編集
+  get '/edit-basic-info/:id', to: 'users#edit_basic_info', as: :basic_info
+  patch 'update-basic-info', to: 'users#update_basic_info'
+  
   resources :users
 end
+
