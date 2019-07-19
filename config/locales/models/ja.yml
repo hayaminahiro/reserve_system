@@ -16,4 +16,10 @@ ja:
         password_confirmation: パスワード確認
         work_time: 指定勤務時間
         basic_time: 基本勤務時間
+      attendance:
+        worked_on: 日付
+        started_at: 出勤時刻
+        finished_at: 退勤時刻
+        note: 備考
+        user: ユーザーID
         

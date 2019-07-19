@@ -1,14 +1,30 @@
 class UsersController < ApplicationController
-  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_one_month, only: :show
   
   def index
     @users = User.paginate(page: params[:page])
   end
   
   def show
-    @user = User.find(params[:id])
+    if params[:first_day].nil?
+      @first_day = Date.current.beginning_of_month
+    else
+      @first_day = Date.parse(params[:first_day])
+    end
+    @last_day = @first_day.end_of_month
+    
+    (@first_day..@last_day).each do |day|
+      unless @user.attendances.any? {|attendance| attendance.worked_on == day}
+        record = @user.attendances.build(worked_on: day)
+        record.save
+      end
+    end
+    @dates = @user.attendances.where('worked_on >= ? and worked_on <= ?', @first_day, @last_day).order('worked_on')
+    @worked_sum = @dates.where.not(started_at: nil).count
   end
   
   def new
@@ -27,11 +43,9 @@ class UsersController < ApplicationController
   end
   
   def edit
-    @user = User.find(params[:id])
   end
   
   def update
-    @user = User.find(params[:id])
     if @user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
@@ -41,19 +55,17 @@ class UsersController < ApplicationController
   end
   
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "ユーザー情報を削除しました。"
+    @user.destroy
+    flash[:success] = "#{@user.name}を削除しました。"
     redirect_to users_url
   end
   
   def edit_basic_info
-     @user = User.find(params[:id])
   end
   
   def update_basic_info
-    @user = User.find(params[:id])
     if @user.update_attributes(basic_info_params)
-      flash[:success] = "基本情報を更新しました。"
+      flash[:success] = "#{@user.name}の基本情報を更新しました。"
       redirect_to @user
     else
       render "edit_basic_info"
@@ -73,6 +85,10 @@ class UsersController < ApplicationController
     end
     
     # beforeアクション
+    
+    def set_user
+      @user = User.find(params[:id])
+    end
     
     # ログイン済みのユーザーかどうか確認
     def logged_in_user

@@ -7,6 +7,12 @@
 }
 
 .user-table {
-  vertical-align: middle;
-  text-align: center;
+  th {
+    vertical-align: middle;
+    text-align: center;
+  }
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
 }
