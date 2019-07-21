@@ -1,15 +1,15 @@
-<% provide(:title, "Login") %>
+<% provide(:title, "ログイン") %>
 
-<h1>Log in</h1>
+<h1>ログイン</h1>
 
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
     <%= form_with scope: :session, url: login_path, local: true do |f| %>
     
-      <%= f.label :email %>
+      <%= f.label :email, "メールアドレス" %>
       <%= f.email_field :email, class: 'form-control' %>
 
-      <%= f.label :password %>
+      <%= f.label :password, "パスワード" %>
       <%= f.password_field :password, class: 'form-control' %>
       
       <%= f.label :remember_me, class: "checkbox inline" do %>
