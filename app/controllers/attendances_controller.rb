@@ -1,4 +1,6 @@
 class AttendancesController < ApplicationController
+  before_action :url_confirmation_attendances_edit_page, only: :edit
+  
   def create
     @user = User.find(params[:user_id])
     @attendance = @user.attendances.find_by(worked_on: Date.today)
@@ -15,6 +17,7 @@ class AttendancesController < ApplicationController
   end
   
   def edit
+    
     @user = User.find(params[:id])
     @first_day = first_day(params[:date])
     @last_day = @first_day.end_of_month
@@ -39,5 +42,16 @@ class AttendancesController < ApplicationController
   private
     def attendances_params
       params.permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
+    
+    # beforeアクション
+    
+    def url_confirmation_attendances_edit_page
+      @user = User.find(params[:id])
+      @attendance = Attendance.find_by(params[:user_id])
+      unless @user.id == current_user.id
+        flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+        redirect_to root_url
+      end
     end
 end

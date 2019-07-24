@@ -4,6 +4,10 @@ class UsersController < ApplicationController
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
+  before_action :url_confirmation_show_page, only: :show
+  before_action :url_confirmation_index_page, only: :index
+  
+  
   
   def index
     @users = User.paginate(page: params[:page])
@@ -13,7 +17,6 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @first_day = first_day(params[:first_day])
     @last_day = @first_day.end_of_month
-    
     (@first_day..@last_day).each do |day|
       unless @user.attendances.any? {|attendance| attendance.worked_on == day}
         record = @user.attendances.build(worked_on: day)
@@ -105,5 +108,22 @@ class UsersController < ApplicationController
     # 管理者かどうか確認
     def admin_user
       redirect_to(root_url) unless current_user.admin?
+    end
+    
+    # showページ：他のユーザーのページをURL上で入力しても拒否
+    def url_confirmation_show_page
+      @user = User.find(params[:id])
+        unless @user.id == @current_user.id
+          flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+          redirect_to root_url
+        end
+    end
+    
+    # adminユーザー以外、URL直接入力してもindexページを開けない
+    def url_confirmation_index_page
+      unless current_user.admin?
+        flash[:danger] = "一般ユーザーの閲覧はできません。"
+        redirect_to root_url
+      end
     end
 end
