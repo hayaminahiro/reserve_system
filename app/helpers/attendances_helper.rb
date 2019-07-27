@@ -29,13 +29,13 @@ module AttendancesHelper
     @user.attendances.where('worked_on >= ? and worked_on <= ?', @first_day, @last_day).order('worked_on')
   end
   
-  # 不正な値があるか確認する
+# 不正な値があるか確認する
   def attendances_invalid?
     attendances = true
     attendances_params.each do |id, item|
       if item[:started_at].blank? && item[:finished_at].blank?
         next
-      elsif item[:started_at].blank? || item[:started_at].blank?
+      elsif item[:started_at].blank? || item[:finished_at].blank?
         attendances = false
         break
       elsif item[:started_at] > item[:finished_at]

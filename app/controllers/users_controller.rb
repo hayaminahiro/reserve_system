@@ -113,10 +113,12 @@ class UsersController < ApplicationController
     # showページ：他のユーザーのページをURL上で入力しても拒否
     def url_confirmation_show_page
       @user = User.find(params[:id])
+      if not current_user.admin?
         unless @user.id == @current_user.id
           flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
           redirect_to root_url
         end
+      end
     end
     
     # adminユーザー以外、URL直接入力してもindexページを開けない

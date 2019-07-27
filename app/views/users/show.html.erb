@@ -49,7 +49,20 @@
     <% @dates.each do |day| %>
       <tr>
         <td><%= l(day.worked_on, format: :short1) %></td>
-        <td><%= $day_of_the_week[day.worked_on.wday] %></td>
+        <td>
+          <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+          <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+          <% if day.worked_on.wday == 0 %>
+            <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+          <% elsif day.worked_on.wday == 6 %>
+            <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+          <% else %>
+            <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+          <% end %>
+          
+          
+          
+        </td>
         <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
         <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
         <td>

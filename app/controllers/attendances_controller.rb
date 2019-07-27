@@ -17,7 +17,6 @@ class AttendancesController < ApplicationController
   end
   
   def edit
-    
     @user = User.find(params[:id])
     @first_day = first_day(params[:date])
     @last_day = @first_day.end_of_month
@@ -34,7 +33,7 @@ class AttendancesController < ApplicationController
       flash[:success] = "勤怠情報を更新しました。"
       redirect_to user_url(@user, params:{first_day: params[:date]})
     else
-      flash[:danger] = "不正な時間入力がありました。再入力して下さい。"
+      flash[:danger] = "不正な時間入力がありました。再入力して下さい。出社時間と退社時間はセットで入力されていますか？"
       redirect_to edit_attendances_path(@user, params[:date])
     end
   end
@@ -49,9 +48,11 @@ class AttendancesController < ApplicationController
     def url_confirmation_attendances_edit_page
       @user = User.find(params[:id])
       @attendance = Attendance.find_by(params[:user_id])
-      unless @user.id == current_user.id
-        flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
-        redirect_to root_url
+      if not current_user.admin?
+        unless @user.id == current_user.id
+          flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+          redirect_to root_url
+        end
       end
     end
 end

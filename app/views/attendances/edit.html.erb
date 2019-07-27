@@ -19,9 +19,17 @@
           <%= fields_for "attendances[]", day do |af| %>  
             <tr>
               <td><%= l(day.worked_on, format: :short1) %></td>
-              <td><%= $day_of_the_week[day.worked_on.wday] %></td>
-              <td><%= af.time_field :started_at, class: 'form-control' %></td>
-              <td><%= af.time_field :finished_at, class: 'form-control' %></td>
+              <td><%= $day_of_the_week[day.worked_on.wday] %>
+                <!--未来の勤怠情報の編集はできない-->
+                <!--if !current_user.admin? && ⇨ 仕様書テストNO,22に基づき削除-->
+                <% if Date.current < day.worked_on %>
+                  <td><%= af.time_field :started_at, readonly: true, class: 'form-control' %></td>
+                  <td><%= af.time_field :finished_at, readonly: true, class: 'form-control' %></td>
+                <% else %>
+                  <td><%= af.time_field :started_at, class: 'form-control' %></td>
+                  <td><%= af.time_field :finished_at, class: 'form-control' %></td>
+                <% end %>
+              </td>
               <td>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
