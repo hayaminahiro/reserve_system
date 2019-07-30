@@ -59,9 +59,6 @@
           <% else %>
             <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
           <% end %>
-          
-          
-          
         </td>
         <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
         <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
