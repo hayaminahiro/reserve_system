@@ -164,3 +164,24 @@ input {
   left: 25%; 
   float: left;
 }
+
+// 検索フォーム
+input[type="text"] {
+  width: 400px;
+  height: 30px;
+}
+
+.input-group {
+  float: right;
+  display: inline-block;
+}
+
+.text-search {
+  display: inline-block;
+  width: 200px;
+}
+
+.search-button {
+  display: inline-block;
+}
+    
