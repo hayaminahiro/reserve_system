@@ -13,10 +13,6 @@ class User < ApplicationRecord
     # 指定勤務時間と基本勤務時間がない場合のエラー処理
   validates :basic_time, presence: true
   validates :work_time, presence: true
-  # def aaa
-  #   errors.add(:basic_time, "が必要です。") if basic_time
-  # end
-  
   
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true

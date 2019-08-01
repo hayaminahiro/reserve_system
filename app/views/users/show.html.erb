@@ -1,3 +1,4 @@
+
 <% provide(:title, @user.name) %>
 <div>
   <table class="table table-bordered table-condensed user-table">
@@ -61,14 +62,14 @@
           <% end %>
         </td>
         <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
-        <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
+        <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
         <td>
           <% if day.worked_on == Date.today && day.started_at.nil? %>
             <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-xs" %>
           <% end %>
         </td>
         <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
-        <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
+        <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
         <td>
           <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
             <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-xs" %>
@@ -77,8 +78,8 @@
         <td>
           <!--総合勤務時間-->
           <% if day.started_at.present? && day.finished_at.present? %>
-            <%= working_times(day.started_at, day.finished_at) %>
-            <% seconds = (day.finished_at - day.started_at).to_i %>
+            <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+            <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
             <% @total_seconds = @total_seconds.to_i + seconds %>
           <% end %>
         </td>
@@ -90,7 +91,7 @@
     <tr>
       <td colspan="2"></td>
       <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_time).to_f * @worked_sum %>h</td>
-      <td>在社時間合計 <%= working_times_sum(@total_seconds) unless @total_seconds.nil? %>h</td>
+      <td>在社時間合計 <%= working_times_sum(@total_seconds.floor_to(15.minutes)) unless @total_seconds.nil? %>h</td>
       <td></td>
     </tr>
   </tfoot>
