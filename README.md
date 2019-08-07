@@ -25,3 +25,4 @@ Things you may want to cover:
 # AttendanceSystem
 
 <!--テスト1-->
+<!--テスト２-->
