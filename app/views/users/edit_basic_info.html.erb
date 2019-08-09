@@ -7,9 +7,11 @@
     <%= form_with(model: @user, url: update_basic_info_path(params: {id: @user.id}), local: true, method: :patch) do |f| %>
       <%= render 'shared/error_messages' %>
       
+      <!--指定勤務時間-->
       <%= f.label :work_time, class:'control-label' %>
       <%= f.time_field :work_time, class: 'form-control' %>
-    
+      
+      <!--基本勤務時間-->
       <%= f.label :basic_time %>
       <%= f.time_field :basic_time, class: 'form-control' %>
     
