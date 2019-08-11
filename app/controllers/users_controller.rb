@@ -10,7 +10,10 @@ class UsersController < ApplicationController
   
   
   def index
+    # @users = User.all
     @users = User.paginate(page: params[:page]).search(params[:search])
+    # @user = User.find_by(id: params[:id])
+    # debugger
   end
   
   def show
@@ -80,7 +83,7 @@ class UsersController < ApplicationController
     end
     
     def basic_info_params
-      params.require(:user).permit(:basic_time, :work_time)
+      params.require(:user).permit(:basic_time, :work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     # beforeアクション

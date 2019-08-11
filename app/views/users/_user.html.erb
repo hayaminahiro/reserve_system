@@ -1,1 +1,36 @@
-
+<%= form_with model: user, local: true do |f| %>
+  <div class="col-xs-12">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  
+    <%= f.label :email %>
+    <%= f.email_field :email, class: 'form-control' %>
+    
+    <!--所属-->
+    <%= f.label :department %>
+    <%= f.text_field :department, class: 'form-control' %>
+    
+    <!--社員番号-->
+    <%= f.label :employee_number %>
+    <%= f.text_field :employee_number, class: 'form-control' %>
+    
+    <!--カードID-->
+    <%= f.label :uid %>
+    <%= f.number_field :uid, class: 'form-control' %>
+  
+    <%= f.label :password %>
+    <%= f.password_field :password, class: 'form-control' %>
+  
+    <!--基本勤務時間-->
+    <%= f.label :basic_work_time %>
+    <%= f.time_field :basic_work_time, class: 'form-control' %>
+    
+    <!--指定勤務開始時間-->
+    <%= f.label :designated_work_start_time %>
+    <%= f.time_field :designated_work_start_time, class: 'form-control' %>
+    
+    <!--指定勤務終了時間-->
+    <%= f.label :designated_work_end_time %>
+    <%= f.time_field :designated_work_end_time, class: 'form-control' %>
+  </div>
+<% end %>

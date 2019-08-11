@@ -1,5 +1,5 @@
 <% provide(:title, @user.name) %>
-<div>
+<div class="container">
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td>
@@ -10,17 +10,16 @@
         </div>
       </td>
       
-      <td>
-        指定勤務開始時間　<%= format_basic_info(@user.work_time) %></br>
-        指定勤務終了時間　<%= format_basic_info(@user.work_time) %>
-      </td>
-      
-      <td>基本時間　<%= format_basic_info(@user.basic_time) %></td>
+      <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
+          指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
+      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_time) %></td>
       <td>初日　<%= l(@first_day, format: :short1) %></td>
     </tr>
     <tr>
       <td>所属：<%= @user.department.present? ? @user.department : "未設定" %></td>
       <td>氏名：<%= @user.name %></td>
+      <td>コード</td>
+      <td>5555</td>
       <td>出勤日数：<%= @worked_sum %>日</td>
       <td>締日　<%= l(@last_day, format: :short1) %></td>
     </tr>

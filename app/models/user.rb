@@ -10,9 +10,14 @@ class User < ApplicationRecord
               uniqueness: { case_sensitive: false }
   validates :department, length: { in: 3.. 50 }, allow_blank: true
   
-    # 指定勤務時間と基本勤務時間がない場合のエラー処理
+  # 指定勤務時間と基本勤務時間がない場合のエラー処理
   validates :basic_time, presence: true
   validates :work_time, presence: true
+  
+  # 指定勤務開始時間と指定勤務終了時間がない場合のエラー処理
+  validates :designated_work_start_time, presence: true
+  validates :designated_work_end_time, presence: true
+  
   
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
