@@ -4,8 +4,18 @@
 <%= render 'shared/error_messages_index' %>
 
 <div class="col-md-10 col-md-offset-1">
-
   <table class="table table-hover" id="table-users">
+    
+<!--CSVインポート-->
+<div class="row">
+  <div class="col-md-4">
+    <%= form_tag import_users_path, multipart: true do %>
+      <%= file_field_tag :file %>
+      <%= submit_tag "CSVインポート", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
     <% @users.each do |user| %>
       <tr>
         <td><%= user.name %></br>
@@ -31,7 +41,7 @@
         </td>
       </tr>
     <% end %>          
-              
   </table>
 </div>
+
 

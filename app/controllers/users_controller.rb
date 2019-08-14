@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   before_action :url_confirmation_show_page, only: :show
   before_action :url_confirmation_index_page, only: :index
   
-  
+  protect_from_forgery :except => [:import]
   
   def index
     @users = User.all
@@ -16,6 +16,12 @@ class UsersController < ApplicationController
     # @users = User.paginate(page: params[:page]).search(params[:search])
     # @user = User.find_by(id: params[:id])
     # debugger
+  end
+  
+  def import
+    # fileはtmpに自動で一時保存される
+    User.import(params[:file])
+    redirect_to users_url
   end
   
   def edit_personal_info

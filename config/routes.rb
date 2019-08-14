@@ -21,12 +21,15 @@ Rails.application.routes.draw do
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
 
   resources :users do
+   
     member do
       # ユーザ情報の編集（indexページ）
       get 'edit_personal_info'
       patch 'update_personal_info'
     end
     resources :attendances, only: :create
+    # CSVルーティング
+    collection { post :import }
   end
 end
 
