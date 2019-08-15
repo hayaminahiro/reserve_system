@@ -5,7 +5,7 @@ ja:
     attributes:
       user:
         name: 名前
-        department: 所属
+        affiliation: 所属
         id: ID
         created_at: 登録日時
         updated_at: 更新日時

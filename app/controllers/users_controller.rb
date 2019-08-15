@@ -21,6 +21,7 @@ class UsersController < ApplicationController
   def import
     # fileはtmpに自動で一時保存される
     User.import(params[:file])
+    flash[:success] = "ユーザー情報をCSVインポートしました！"
     redirect_to users_url
   end
   
@@ -30,7 +31,7 @@ class UsersController < ApplicationController
   def update_personal_info
     @users = User.all
     if @user.update_attributes(personal_info_params)
-      flash[:success] = "ユーザー情報を更新しました。"
+      flash[:success] = "#{@user.name}さんのユーザー情報を更新しました。"
       redirect_to action: 'index'
     else
       render :index
@@ -99,8 +100,10 @@ class UsersController < ApplicationController
   private
   
     def user_params
-      params.require(:user).permit(:name, :email, :department,
-                            :password, :password_confirmation)
+      # params.require(:user).permit(:name, :email, :affiliation,
+      #                       :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, 
+        :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     def basic_info_params
@@ -109,7 +112,7 @@ class UsersController < ApplicationController
     end
     
     def personal_info_params
-      params.require(:user).permit(:name, :email, :department, :employee_number, :uid, 
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, 
         :password, :basic_time, :designated_work_start_time, :designated_work_end_time)
     end
     
