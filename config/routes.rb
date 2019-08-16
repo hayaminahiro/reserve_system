@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
 
   resources :users do
-   
+    get 'currently_working', on: :collection
     member do
       # ユーザ情報の編集（indexページ）
       get 'edit_personal_info'

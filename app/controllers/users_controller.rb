@@ -97,6 +97,11 @@ class UsersController < ApplicationController
     end
   end
   
+  # 出勤中社員一覧
+  def currently_working
+    @working_users = User.all.includes(:attendances)
+  end
+  
   private
   
     def user_params
