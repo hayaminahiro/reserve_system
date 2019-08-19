@@ -1,6 +1,10 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+vertical-align: middle;
+}
+
 /* mixins, variables, etc. */
 
 $gray-medium-light: #eaeaea;
@@ -166,7 +170,7 @@ input {
 }
 
 .btn-primary {
-  margin: 5px 0px 10px 5px;
+  margin: 5px 0px 10px 0px;
 }
 
 // 検索フォーム
@@ -192,3 +196,24 @@ input[type="text"] {
  margin: 10px;
 }
 
+// 拠点追加
+.base-btn {
+  float: right;
+  margin: 10px 10px 10px 16px;
+}
+
+.base-table td {
+  display: block;
+  align-items: center;
+  vertical-align: center;
+  text-align: center;
+  display: table-cell;
+}
+
+.base-table th {
+  display: block;
+  align-items: center;
+  vertical-align: center;
+  text-align: center;
+  display: table-cell;
+}

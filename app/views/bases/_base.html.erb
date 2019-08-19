@@ -1,0 +1,14 @@
+<%= form_with model: @base, local: true do |f| %>
+  <%= render 'shared/error_messages_base' %>
+
+  <%= f.label :base_number %>
+  <%= f.text_field :base_number, class: 'form-control' %>
+
+  <%= f.label :base_name %>
+  <%= f.text_field :base_name, class: 'form-control' %>
+  
+  <%= f.label :attendance_type %>
+  <%= f.text_field :attendance_type, class: 'form-control' %>
+
+  <%= f.submit "保存", class: "btn btn-primary" %>
+<% end %>

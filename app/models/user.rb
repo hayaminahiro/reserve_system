@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates :affiliation, length: { in: 3.. 50 }, allow_blank: true
   
   # 指定勤務時間と基本勤務時間がない場合のエラー処理
-  validates :basic_time, presence: true
+  validates :basic_work_time, presence: true
   validates :work_time, presence: true
   validates :designated_work_start_time, presence: true
   validates :designated_work_end_time, presence: true
@@ -20,10 +20,8 @@ class User < ApplicationRecord
   validates :designated_work_start_time, presence: true
   validates :designated_work_end_time, presence: true
   
-  
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
-  
   
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
@@ -77,7 +75,7 @@ class User < ApplicationRecord
 
   # 更新を許可するカラムを定義
   def self.updatable_attributes
-    ["name", "email", "affiliation", "employee_number", "uid", "basic_time", 
+    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", 
     "designated_work_start_time", "designated_work_end_time", "admin", "password"]
   end
 end

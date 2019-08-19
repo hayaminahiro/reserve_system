@@ -2,7 +2,6 @@
 /* ユーザー一覧ページ */
 #table-users td {
   vertical-align: middle;
-  margin: 0 auto;
   display: table-cell; }
 
 .user-table th {
@@ -14,4 +13,3 @@
   text-align: center;
   display: table-cell; }
 
-/*# sourceMappingURL=users.css.map */

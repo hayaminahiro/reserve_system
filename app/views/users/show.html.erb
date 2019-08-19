@@ -12,7 +12,7 @@
       
       <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
           指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
-      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_time) %></td>
+      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
       <td>初日　<%= l(@first_day, format: :short1) %></td>
     </tr>
     <tr>
@@ -115,7 +115,7 @@
   <tfoot>
     <tr>
       <td colspan="3"></td>
-      <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_time).to_f * @worked_sum %>h</td>
+      <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_work_time).to_f * @worked_sum %>h</td>
       <td colspan="2">在社時間合計 <%= working_times_sum(@total_seconds.floor_to(15.minutes)) unless @total_seconds.nil? %>h</td>
       <td colspan="4"></td>
       <td>

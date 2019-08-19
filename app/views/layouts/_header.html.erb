@@ -11,7 +11,7 @@
             <!--この部分は一般ユーザーに表示しない-->
             <li><%= link_to "ユーザーー覧", users_path %></li>
             <li><%= link_to "出勤社員一覧", currently_working_users_path %></li>
-            <li><%= link_to "拠点情報の修正", "#" %></li>
+            <li><%= link_to "拠点情報の修正", bases_path %></li>
             <li><%= link_to "基本情報の修正", basic_info_path(current_user) %></li>
           <% end %>
           
@@ -21,7 +21,10 @@
               アカウント<b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><%= link_to "ユーザー勤怠情報表示", current_user %></li>
+              
+              <% if not current_user.admin? %>
+                <li><%= link_to "ユーザー勤怠情報表示", current_user %></li>
+              <% end %>
               <li><%= link_to "設定", edit_user_path(current_user) %></li>
               <li class="divider"></li>
               <li><%= link_to "ログアウト", logout_path, method: :delete %></li>

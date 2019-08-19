@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_14_122058) do
+ActiveRecord::Schema.define(version: 2019_08_19_034104) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -23,6 +23,14 @@ ActiveRecord::Schema.define(version: 2019_08_14_122058) do
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
+  create_table "bases", force: :cascade do |t|
+    t.integer "base_number"
+    t.string "base_name"
+    t.string "attendance_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -31,14 +39,15 @@ ActiveRecord::Schema.define(version: 2019_08_14_122058) do
     t.string "password_digest"
     t.string "remember_digest"
     t.boolean "admin", default: false
-    t.string "affiliation"
+    t.string "department"
     t.datetime "basic_time", default: "2019-06-30 22:30:00"
     t.datetime "work_time", default: "2019-06-30 23:00:00"
-    t.datetime "designated_work_start_time", default: "2019-08-14 00:00:00"
-    t.datetime "designated_work_end_time", default: "2019-08-14 09:00:00"
+    t.datetime "designated_work_start_time", default: "2019-08-19 00:00:00"
+    t.datetime "designated_work_end_time", default: "2019-08-19 09:00:00"
     t.integer "employee_number"
     t.string "uid"
     t.string "affiliation"
+    t.datetime "basic_work_time", default: "2019-06-30 22:30:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

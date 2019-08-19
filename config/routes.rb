@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   # 勤怠情報の編集
   get '/users/:id/attendances/:date/edit', to: 'attendances#edit', as: :edit_attendances
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
+  
+  
+  # post '/bases/:id', to: 'bases#edit'
 
   resources :users do
     get 'currently_working', on: :collection
@@ -31,5 +34,7 @@ Rails.application.routes.draw do
     # CSVルーティング
     collection { post :import }
   end
+  # 拠点情報ルーティング
+  resources :bases
 end
 
