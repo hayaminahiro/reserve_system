@@ -26,6 +26,9 @@
   </table>
 </div>
 <%= link_to "【所属長承認申請のお知らせ】", "#" %></br>
+<%= link_to "基本情報編集", edit_basic_info_user_path(user), remote: true, class: "btn btn-success" %>
+
+
 <%= link_to "【勤怠変更申請のお知らせ】", "#" %></br>
 <%= link_to "【残業申請のお知らせ】", "#" %>
 <!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
@@ -151,3 +154,6 @@
     </tr>
   </tfoot>
 </table>
+
+<!--モーダルウインドウ表示-->
+<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
