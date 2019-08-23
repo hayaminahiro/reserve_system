@@ -58,6 +58,13 @@ h2 {
   color: $gray-light;
 }
 
+h4 {
+  font-size: 1.8em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 p {
   font-size: 1.1em;
   line-height: 1.7em;
@@ -216,4 +223,29 @@ input[type="text"] {
   vertical-align: center;
   text-align: center;
   display: table-cell;
+}
+
+/* モーダルウインドウの位置調整 */
+
+.modal-dialog-center {
+  padding-top: 10%;
+}
+
+.modal-content {
+  width: 180%;
+  margin-left:-250px;
+}
+
+.modal-body {
+  // display: block;
+  align-items: center;
+  vertical-align: center;
+  text-align: center;
+  // display: table-cell;
+}
+
+.table-bordered {
+  align-items: center;
+  vertical-align: center;
+  text-align: center;
 }

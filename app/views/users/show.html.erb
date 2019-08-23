@@ -25,10 +25,7 @@
     </tr>
   </table>
 </div>
-<%= link_to "【所属長承認申請のお知らせ】", "#" %></br>
-<%= link_to "基本情報編集", edit_basic_info_user_path(user), remote: true, class: "btn btn-success" %>
-
-
+<%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %></br>
 <%= link_to "【勤怠変更申請のお知らせ】", "#" %></br>
 <%= link_to "【残業申請のお知らせ】", "#" %>
 <!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
@@ -69,51 +66,55 @@
   </thead>
   
   <tbody>
-    <% @dates.each do |day| %>
-      <tr>
-        <td><%= link_to "残業申請", "#", class: "btn btn-primary" %></td>
-        <td><%= l(day.worked_on, format: :short1) %></td>
-        <td>
-          <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
-          <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
-          <% if day.worked_on.wday == 0 %>
-            <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-          <% elsif day.worked_on.wday == 6 %>
-            <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-          <% else %>
-            <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-          <% end %>
-        </td>
-        <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
-        <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
-        <td>
-          <% if day.worked_on == Date.today && day.started_at.nil? %>
-            <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-          <% end %>
-        </td>
-        <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
-        <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
-        <td>
-          <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
-            <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-          <% end %>
-        </td>
-        <td>
-          <!--総合勤務時間-->
-          <% if day.started_at.present? && day.finished_at.present? %>
-            <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
-            <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
-            <% @total_seconds = @total_seconds.to_i + seconds %>
-          <% end %>
-        </td>
-        <td><%= day.note %></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-    <% end %>
+    
+      <% @dates.each do |day| %>
+        <tr>
+          <td>
+            <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, youbi: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+          </td>
+          <td><%= l(day.worked_on, format: :short1) %></td>
+          <td>
+            <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+            <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+            <% if day.worked_on.wday == 0 %>
+              <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+            <% elsif day.worked_on.wday == 6 %>
+              <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+            <% else %>
+              <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+            <% end %>
+          </td>
+          <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
+          <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
+          <td>
+            <% if day.worked_on == Date.today && day.started_at.nil? %>
+              <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+            <% end %>
+          </td>
+          <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
+          <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
+          <td>
+            <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
+              <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+            <% end %>
+          </td>
+          <td>
+            <!--総合勤務時間-->
+            <% if day.started_at.present? && day.finished_at.present? %>
+              <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+              <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
+              <% @total_seconds = @total_seconds.to_i + seconds %>
+            <% end %>
+          </td>
+          <td><%= day.note %></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      <% end %>
+   
   </tbody>
   <tfoot>
     <tr>
@@ -156,4 +157,4 @@
 </table>
 
 <!--モーダルウインドウ表示-->
-<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit_overwork_request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

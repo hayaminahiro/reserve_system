@@ -20,9 +20,9 @@ Rails.application.routes.draw do
   get '/users/:id/attendances/:date/edit', to: 'attendances#edit', as: :edit_attendances
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
   
+  get 'users/:id/attendances/:id/edit_overwork_request', to: 'users#edit_overwork_request', as: :edit_overwork_request
+  patch 'users/:id/attendances/:id/update_overwork_request', to: 'users#update_overwork_request', as: :update_overwork_request
   
-  # post '/bases/:id', to: 'bases#edit'
-
   resources :users do
     get 'currently_working', on: :collection
     member do
@@ -30,10 +30,11 @@ Rails.application.routes.draw do
       get 'edit_personal_info'
       patch 'update_personal_info'
     end
-    resources :attendances, only: :create
+    resources :attendances
     # CSVルーティング
     collection { post :import }
   end
+  
   # 拠点情報ルーティング
   resources :bases
 end

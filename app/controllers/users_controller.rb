@@ -1,7 +1,9 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, 
-          :update_basic_info, :edit_personal_info, :update_personal_info]
-  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+          :update_basic_info, :edit_personal_info, :update_personal_info, :edit_overwork_request,
+          :update_overwork_request]
+  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info,
+          :update_basic_info, :edit_overwork_request, :update_overwork_request]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
@@ -39,6 +41,7 @@ class UsersController < ApplicationController
   end
   
   def show
+    @users = User
     @user = User.find(params[:id])
     @first_day = first_day(params[:first_day])
     @last_day = @first_day.end_of_month
@@ -100,6 +103,14 @@ class UsersController < ApplicationController
   # 出勤中社員一覧
   def currently_working
     @working_users = User.all.includes(:attendances)
+  end
+  
+  def edit_overwork_request
+    @day = Date.parse(params[:day])
+    @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
+  end
+  
+  def update_overwork_request
   end
   
   private
