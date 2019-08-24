@@ -53,6 +53,8 @@ class UsersController < ApplicationController
     end
     @dates = user_attendances_month_date
     @worked_sum = @dates.where.not(started_at: nil).count
+    @attendance = User.all.includes(:attendances)
+    # debugger
   end
   
   def new
@@ -105,15 +107,29 @@ class UsersController < ApplicationController
     @working_users = User.all.includes(:attendances)
   end
   
+  # 残業申請
   def edit_overwork_request
     @day = Date.parse(params[:day])
     @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
   end
   
   def update_overwork_request
+    
+  end
+  
+  # 残業申請受理
+  def edit_overwork_receive
+    
+  end
+  
+  def update_overwork_receive
   end
   
   private
+  
+    def overwork_params
+      params.permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
   
     def user_params
       # params.require(:user).permit(:name, :email, :affiliation,

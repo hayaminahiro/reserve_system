@@ -38,12 +38,6 @@ class AttendancesController < ApplicationController
     end
   end
   
-  def edit_overwork_request
-  end
-  
-  def update_overwork_request
-  end
-  
   private
     def attendances_params
       params.permit(attendances: [:started_at, :finished_at, :note])[:attendances]

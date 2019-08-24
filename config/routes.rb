@@ -20,8 +20,13 @@ Rails.application.routes.draw do
   get '/users/:id/attendances/:date/edit', to: 'attendances#edit', as: :edit_attendances
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
   
+  # 残業申請
   get 'users/:id/attendances/:id/edit_overwork_request', to: 'users#edit_overwork_request', as: :edit_overwork_request
   patch 'users/:id/attendances/:id/update_overwork_request', to: 'users#update_overwork_request', as: :update_overwork_request
+  
+  # 残業申請受理
+  get 'users/:id/attendances/:id/edit_overwork_receive', to: 'users#edit_overwork_receive', as: :edit_overwork_receive
+  patch 'users/:id/attendances/:id/update_overwork_receive', to: 'users#update_overwork_receive', as: :update_overwork_receive
   
   resources :users do
     get 'currently_working', on: :collection
