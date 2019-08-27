@@ -7,8 +7,8 @@
       <h4 class="modal-title">【残業申請】</h4>
     </div>
     <div class="modal-body">
-      
-      <%= form_with(model: @attendance, url: update_overwork_request_path(@user), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @attendance, local: true, method: :patch) do |f| %>
+      <!--form_with(model: @attendance, url: update_overwork_request_path(@user), local: true, method: :patch) do |f|-->
         <table class="table table-bordered">
           <thead class="mokuji">
             <tr>
@@ -20,7 +20,7 @@
               <th>指示者確認㊞</th>
             </tr>
           </thead>
- 
+         
           <tbody>
             <tr>
               <td><%= @day.to_s(:date) %></td>
@@ -36,8 +36,7 @@
                 </select>
               </td>
             </tr>
-          </tbody>
-          
+           </tbody>
         </table>
       <% end %>
     </div>

@@ -109,6 +109,12 @@ class UsersController < ApplicationController
   
   # 残業申請
   def edit_overwork_request
+    @user = User.find(params[:id])
+    @attendances = Attendance.all
+    # @attendance = @attendances.find_by(params[:user_id]) 
+    @attendance = @user.attendances.find_by(worked_on: @day)
+    
+    # debugger
     @day = Date.parse(params[:day])
     @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
   end
