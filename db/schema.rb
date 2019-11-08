@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_24_044139) do
+ActiveRecord::Schema.define(version: 2019_11_08_051142) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,7 +20,10 @@ ActiveRecord::Schema.define(version: 2019_08_24_044139) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "scheduled_end_time", default: "2019-08-24 10:00:00"
+    t.datetime "scheduled_end_time", default: "2019-11-08 19:00:00"
+    t.string "status"
+    t.integer "superior_id"
+    t.datetime "apply_month"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -41,14 +44,14 @@ ActiveRecord::Schema.define(version: 2019_08_24_044139) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2019-06-30 22:30:00"
-    t.datetime "work_time", default: "2019-06-30 23:00:00"
-    t.datetime "designated_work_start_time", default: "2019-08-21 00:00:00"
-    t.datetime "designated_work_end_time", default: "2019-08-21 09:00:00"
+    t.datetime "basic_time", default: "2019-07-01 07:30:00"
+    t.datetime "work_time", default: "2019-07-01 08:00:00"
+    t.datetime "designated_work_start_time", default: "2019-11-08 09:00:00"
+    t.datetime "designated_work_end_time", default: "2019-11-08 18:00:00"
     t.integer "employee_number"
     t.string "uid"
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2019-06-30 22:30:00"
+    t.datetime "basic_work_time", default: "2019-07-01 07:30:00"
     t.boolean "superior", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end

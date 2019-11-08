@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   include AttendancesHelper
   
   # 曜日を格納 $はグローバル変数（どこでも壁を乗り越え使用可）
+  # 下記の%w{日 月 火 水 木 金 土}はRubyのリテラル表記と呼ばれるもの
+  # ["日", "月", "火", "水", "木", "金", "土"]の配列と同じように使用可
   $day_of_the_week = %w{日 月 火 水 木 金 土}
   
   # ページ出力前に1ヵ月分のデータの存在を確認・セット

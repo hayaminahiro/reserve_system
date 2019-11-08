@@ -41,20 +41,22 @@ class UsersController < ApplicationController
   end
   
   def show
-    @users = User
-    @user = User.find(params[:id])
-    @first_day = first_day(params[:first_day])
-    @last_day = @first_day.end_of_month
-    (@first_day..@last_day).each do |day|
+    @user = User.find(params[:id]) # 引数で指定するidはparamsで取得/id=1のユーザーを@userに代入
+    @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
+    @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
+    (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
       unless @user.attendances.any? {|attendance| attendance.worked_on == day}
         record = @user.attendances.build(worked_on: day)
         record.save
       end
     end
+    # 1ヶ月の情報を表す・・・attendances_helper.rb参照
     @dates = user_attendances_month_date
     @worked_sum = @dates.where.not(started_at: nil).count
     @attendance = User.all.includes(:attendances)
-    # debugger
+    # 申請ボタンで選択した上長
+    @month_count = Attendance.where(superior_id: current_user.id).count
+
   end
   
   def new
@@ -111,26 +113,22 @@ class UsersController < ApplicationController
   def edit_overwork_request
     @user = User.find(params[:id])
     @attendances = Attendance.all
-    # @attendance = @attendances.find_by(params[:user_id]) 
-    @attendance = @user.attendances.find_by(worked_on: @day)
-    
-    # debugger
+    # (params[:day])で受け取ったデータを日付に変換し@dayに格納
     @day = Date.parse(params[:day])
+    @attendance = @user.attendances.find_by(worked_on: @day)
     @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
   end
-  
-  def update_overwork_request
-    
-  end
-  
+
   # 残業申請受理
   def edit_overwork_receive
-    
   end
-  
+  def update_overwork_request
+  end
   def update_overwork_receive
   end
-  
+
+
+
   private
   
     def overwork_params
@@ -138,8 +136,6 @@ class UsersController < ApplicationController
     end
   
     def user_params
-      # params.require(:user).permit(:name, :email, :affiliation,
-      #                       :password, :password_confirmation)
       params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, 
         :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
@@ -155,7 +151,6 @@ class UsersController < ApplicationController
     end
     
     # beforeアクション
-    
     def set_user
       @user = User.find(params[:id])
     end

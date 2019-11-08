@@ -16,20 +16,20 @@
       <td>初日　<%= l(@first_day, format: :short1) %></td>
     </tr>
     <tr>
+      <!--@user.affiliation(所属カラム)がtrueで存在する場合はそれを表示、falseの場合は未設定を表示-->
       <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未設定" %></td>
       <td>氏名：<%= @user.name %></td>
       <td>コード</td>
       <td>5555</td>
+      <!--@dates = user_attendances_month_date-->
+      <!--@worked_sum = @dates.where.not(started_at: nil).count-->
+      <!--@worked_sumは出勤日がnilでない = 出勤した日数を表す・・・Userコントローラー参照-->
       <td>出勤日数：<%= @worked_sum %>日</td>
       <td>締日　<%= l(@last_day, format: :short1) %></td>
     </tr>
   </table>
 </div>
-
-  <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %></br>
-  <%= link_to "【勤怠変更申請のお知らせ】", "#" %></br>
-  <%= link_to "【残業申請のお知らせ】", edit_overwork_receive_path(@user), remote: true %>
-
+<%= render 'users/notice' %>
 <!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
 <div class="csv-edit-button">
   <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
@@ -66,98 +66,99 @@
       <th>分</th>
     </tr>
   </thead>
-  
   <tbody>
-    
-      <% @dates.each do |day| %>
-        <tr>
-          <td>
-            <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, youbi: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
-          </td>
-          <td><%= l(day.worked_on, format: :short1) %></td>
-          <td>
-            <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
-            <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
-            <% if day.worked_on.wday == 0 %>
-              <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-            <% elsif day.worked_on.wday == 6 %>
-              <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-            <% else %>
-              <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
-            <% end %>
-          </td>
-          <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
-          <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
-          <td>
-            <% if day.worked_on == Date.today && day.started_at.nil? %>
-              <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-            <% end %>
-          </td>
-          <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
-          <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
-          <td>
-            <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
-              <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-            <% end %>
-          </td>
-          <td>
-            <!--総合勤務時間-->
-            <% if day.started_at.present? && day.finished_at.present? %>
-              <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
-              <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
-              <% @total_seconds = @total_seconds.to_i + seconds %>
-            <% end %>
-          </td>
-          <td><%= day.note %></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      <% end %>
-   
+    <!--@dates = user_attendances_month_date → 1ヶ月分の情報を表す-->
+    <% @dates.each do |day| %>
+      <tr>
+        <td>
+          <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
+          <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+        </td>
+        <td>
+          <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
+          <%= l(day.worked_on, format: :short1) %>
+        </td>
+        <td>
+          <!--[日〜土（配列番号0~6）][0~6]で配列から曜日を選択/wdayは番号で曜日を表す（日曜から0番）-->
+          <!--dayは1日から始まる変数で、each文で@dates(1ヶ月分繰り返される)-->
+          <!--worked_onは日付のカラムを表し、wdayは曜日に変換するメソッド-->
+          <!--例：day.worked_onは=> Tue, 01 Oct 2019　/ これに.wdayすると =>2 つまり火曜日となる-->
+          <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+          <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+          <% if day.worked_on.wday == 0 %>
+            <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+          <% elsif day.worked_on.wday == 6 %>
+            <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+          <% else %>
+            <%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+          <% end %>
+        </td>
+        <!--もし出社時間が存在すれば時間を表示-->
+        <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
+        <!--もし出社時間が存在すれば分を15分単位で表示-->
+        <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
+        <td>
+          <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
+          <% if day.worked_on == Date.today && day.started_at.nil? %>
+            <!--user_attendances_path →　attendances#create createする-->
+            <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <% end %>
+        </td>
+        <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
+        <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
+        <td>
+          <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
+          <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
+            <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <% end %>
+        </td>
+        <td>
+          <!--総合勤務時間-->
+          <!--もし出社時間が存在し、かつ退社時間も存在したら、-->
+          <% if day.started_at.present? && day.finished_at.present? %>
+            <!--working_timesは在社時間を計算するメソッド → attendanceヘルパー参照-->
+            <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+            <!--非表示だが下記で在社時刻を計算-->
+            <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
+            <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
+            <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
+            <% @total_seconds = @total_seconds.to_i + seconds %>
+          <% end %>
+        </td>
+        <td><%= day.note %></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
   </tbody>
+
   <tfoot>
     <tr>
       <td colspan="3"></td>
+      <!--format_basic_info　→　基本時間・指定勤務時間などをフォーマット化・・・Userヘルパー参照-->
+      <!--基本情報時間 basic_work_time（基本7.5h）-->
+      <!--str.to_f / 文字列の先頭から浮動小数点数と見なせる部分を切り取って変換 / 見なせる部分がなければ0.0を返す-->
+      <!--基本情報時間 * @worked_sum(出勤日数合計) = 総合勤務時間を format_basic_info でフォーマット化する-->
       <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_work_time).to_f * @worked_sum %>h</td>
+
+      <!--@total_secondsがnilでない場合、秒数単位の@total_secondsをworking_times_sumで勤務時間の合計数を出す-->
+      <!--working_times_sum：勤務時間の合計（attendanceヘルパー参照）-->
       <td colspan="2">在社時間合計 <%= working_times_sum(@total_seconds.floor_to(15.minutes)) unless @total_seconds.nil? %>h</td>
       <td colspan="4"></td>
       <td>
-        <%= form_with model: @user, local: true do |f| %>
-          <%= render 'shared/error_messages' %>
-            <div class="form-group">
-              <label for="select1a">所属長承認 未</label>
-              <select id="select1a" class="form-control">
-                <option>上長A</option>
-                <option>上長B</option>
-                <option>上長C</option>
-              </select>
-              <select id="select1a" class="form-control">
-                <option>1月</option>
-                <option>2月</option>
-                <option>3月</option>
-                <option>4月</option>
-                <option>5月</option>
-                <option>6月</option>
-                <option>7月</option>
-                <option>8月</option>
-                <option>9月</option>
-                <option>10月</option>
-                <option>11月</option>
-                <option>12月</option>
-              </select>
-            </div>
-            <div class="btn-attendances-center">
-              <%= f.submit "申請", class: "btn btn-primary" %>
-            </div>
-          <% end %>
+        <!--指定上長のShowページへ1ヶ月分の勤怠情報を送信-->
+        <%= render 'users/month_attendance_update' %>
       </td>
     </tr>
   </tfoot>
 </table>
 
-<!--モーダルウインドウ表示-->
+<!--残業申請モーダルウインドウ表示-->
 <div id="edit_overwork_request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit_overwork_receive" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!--iヶ月勤怠申請モーダルウィンドウ表示-->
+<div id="month_attendances_confirmation" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

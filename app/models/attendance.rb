@@ -1,4 +1,5 @@
 class Attendance < ApplicationRecord
+  # Attendanceモデルから見たuserモデルとの関連性は1対1
   belongs_to :user
   
   # 日付は必須
@@ -22,5 +23,6 @@ class Attendance < ApplicationRecord
       errors.add(:started_at, "より早い退勤時刻は無効です。") if started_at > finished_at
     end
   end
-  
 end
+
+# user_idはユーザーと勤怠情報を紐付けるカラムだが、自動で存在性の検証を行う為バリデーションは不要

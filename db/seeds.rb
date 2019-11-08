@@ -33,3 +33,26 @@ User.create!(name:  "上長B",
              designated_work_start_time: Time.current.change(hour: 9, min: 0, sec: 0),
              designated_work_end_time: Time.current.change(hour: 18, min: 0, sec: 0),
              superior: true)
+
+User.create!(name:  "上長C",
+             email: "superior3@email.com",
+             affiliation: "フリーランス事業部",
+             employee_number: 4,
+             uid: 1002,
+             password:              "password",
+             password_confirmation: "password",
+             basic_work_time: Time.zone.parse('2019-07-01 07:30:00'),
+             designated_work_start_time: Time.current.change(hour: 9, min: 0, sec: 0),
+             designated_work_end_time: Time.current.change(hour: 18, min: 0, sec: 0),
+             superior: true)
+
+User.create!(name:  "齋藤隼人",
+             email: "hayato@email.com",
+             affiliation: "フリーランス事業部",
+             employee_number: 4,
+             uid: 1002,
+             password:              "password",
+             password_confirmation: "password",
+             basic_work_time: Time.zone.parse('2019-07-01 07:30:00'),
+             designated_work_start_time: Time.current.change(hour: 9, min: 0, sec: 0),
+             designated_work_end_time: Time.current.change(hour: 18, min: 0, sec: 0))
