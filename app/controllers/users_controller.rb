@@ -41,20 +41,20 @@ class UsersController < ApplicationController
   end
   
   def show
-    @user = User.find(params[:id]) # 引数で指定するidはparamsで取得/id=1のユーザーを@userに代入
-    @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
-    @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
-    (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
+    @user = User.find(params[:id])
+    @first_day = first_day(params[:first_day])
+    @last_day = @first_day.end_of_month
+    (@first_day..@last_day).each do |day|
       unless @user.attendances.any? {|attendance| attendance.worked_on == day}
         record = @user.attendances.build(worked_on: day)
         record.save
       end
     end
-    # 1ヶ月の情報を表す・・・attendances_helper.rb参照
     @dates = user_attendances_month_date
+
     @worked_sum = @dates.where.not(started_at: nil).count
     @attendance = User.all.includes(:attendances)
-    # 申請ボタンで選択した上長
+    # 申請ボタンで選択された上長カラムがcurrent_userの数
     @month_count = Attendance.where(superior_id: current_user.id).count
 
   end
@@ -178,14 +178,14 @@ class UsersController < ApplicationController
     # showページ：他のユーザーのページをURL上で入力しても拒否
     def url_confirmation_show_page
       @user = User.find(params[:id])
-      if not current_user.admin?
+      if not current_user.admin? || current_user.superior?
         unless @user.id == @current_user.id
           flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
           redirect_to root_url
         end
       end
     end
-    
+
     # adminユーザー以外、URL直接入力してもindexページを開けない
     def url_confirmation_index_page
       unless current_user.admin?

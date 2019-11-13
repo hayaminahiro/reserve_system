@@ -1,0 +1,54 @@
+<div class="modal-dialog modal-dialog-center">
+  <%= form_with(model: @user, url: update_approval_path(@user), local: true, method: :patch) do |f| %>
+    <% @users.each do |user| %>
+      <!--eachで回しているuserのuser_idがuser.idの箇所をwhereで範囲指定し、Attendance情報を抽出 → attendancesに代入-->
+      <!--Attendance.where(user_id: 3)のような形になる-->
+      <% attendances = Attendance.where(user_id: user.id) %>
+      <% attendances.each do |at| %>
+        <% if at.superior_id == current_user.id %>
+          <div class="modal-position">
+            <div class="modal-content">
+              <!--モーダルヘッダー-->
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                  <h4 class="modal-title">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
+              </div>
+              <!--モーダルボディ-->
+              <div class="modal-body">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th class="title-position">月</th>
+                      <th class="title-position">指示者確認㊞</th>
+                      <th class="title-position">変更</th>
+                      <th class="title-position">勤怠を確認する</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td><%= l(at.apply_month, format: :month) %></td>
+                    <td class="select-approval">
+                      <%= f.select :month_approval, Attendance.month_approvals.keys.to_a, {}, { class: "form-control" } %>
+                    </td>
+                    <td width="135px"><%= f.check_box :month_check %></td>
+                    <td>
+                      <%= link_to "確認", user_path(user), class: 'btn btn-primary' %>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!--モーダルフッター-->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                <button type="button" class="btn btn-primary">変更を送信する</button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

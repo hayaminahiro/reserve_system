@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :update_month]
+  before_action :set_user, only: [:edit, :update, :update_month, :month_approval]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -53,12 +53,38 @@ class AttendancesController < ApplicationController
         attendance = Attendance.find(id)
         attendance.update_attributes(item)
       end
-
       flash[:success] = "所属長申請しました。"
       redirect_to @user
     end
   end
 
+  # 1ヶ月分勤怠申請/モーダル表示
+  def month_approval
+    @users = User.all
+    @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
+    @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
+    (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
+      unless @user.attendances.any? {|attendance| attendance.worked_on == day}
+        record = @user.attendances.build(worked_on: day)
+        record.save
+      end
+    end
+    # 1ヶ月の情報を表す・・・attendances_helper.rb参照
+    @dates = user_attendances_month_date
+    @attendance = User.all.includes(:attendances)
+    # 申請ボタンで選択された上長カラムがcurrent_userの数
+    @month_count = Attendance.where(superior_id: current_user.id).count
+  end
+
+  # 申請の承認可否の更新
+  def update_approval
+      update_approval_params.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)
+      end
+      flash[:success] = "所属長申請しました。"
+      redirect_to @user
+  end
 
 
 
@@ -87,6 +113,8 @@ class AttendancesController < ApplicationController
     def update_month_params
       params.permit(attendances: [:superior_id, :apply_month])[:attendances]
     end
+
+    # 申請の承認可否の更新
     
     # beforeアクション
 

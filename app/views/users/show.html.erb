@@ -2,13 +2,17 @@
 <div class="container">
   <table class="table table-bordered table-condensed user-table">
     <tr>
-      <td>
-        <div class="btn-users-show">
-          <%= link_to "◀️️", user_path(params: {id: @user.id, first_day: @first_day.prev_month }), class: "btn btn-primary btn-xs" %>
-          <%= l(@first_day, format: :long) %> 時間管理表
-          <%= link_to "▶︎️", user_path(params: {id: @user.id, first_day: @first_day.next_month }), class: "btn btn-primary btn-xs" %>
-        </div>
-      </td>
+      <% if current_user.id? %>
+        <td>
+          <div class="btn-users-show">
+            <% if @user.id == current_user.id %>
+              <%= link_to "◀︎", user_path(params: {id: @user.id, first_day: @first_day.prev_month }), class: "btn btn-primary btn-xs" %>
+              <%= l(@first_day, format: :long) %> 時間管理表
+              <%= link_to "▶︎", user_path(params: {id: @user.id, first_day: @first_day.next_month }), class: "btn btn-primary btn-xs" %>
+            <% end %>
+          </div>
+        </td>
+      <% end %>
       
       <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
           指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
@@ -29,12 +33,16 @@
     </tr>
   </table>
 </div>
-<%= render 'users/notice' %>
+<% if @user.id == current_user.id %>
+  <%= render 'users/notice' %>
+<% end %>
 <!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
 <div class="csv-edit-button">
-  <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
-  <%= link_to "CSV出力", "#", class: "btn btn-primary btn-primary" %>
-  <%= link_to "勤怠修正ログ(承認済み)", "#", class: "btn btn-primary btn-primary" %>
+  <% if @user.id == current_user.id %>
+    <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
+    <%= link_to "CSV出力", "#", class: "btn btn-primary btn-primary" %>
+    <%= link_to "勤怠修正ログ(承認済み)", "#", class: "btn btn-primary btn-primary" %>
+  <% end %>
 </div>
 <table class="table table-striped table-bordered table-condensed table-hover user-table">
   <thead>
@@ -67,12 +75,15 @@
     </tr>
   </thead>
   <tbody>
-    <!--@dates = user_attendances_month_date → 1ヶ月分の情報を表す-->
+    <!--@attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)-->
+    <!--@attendancesは、@userに紐づくattendance情報で、１日から末日の範囲を代入-->
     <% @dates.each do |day| %>
       <tr>
         <td>
-          <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
-          <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+          <% if @user.id == current_user.id %>
+            <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
+            <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+          <% end %>
         </td>
         <td>
           <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
@@ -83,14 +94,14 @@
           <!--dayは1日から始まる変数で、each文で@dates(1ヶ月分繰り返される)-->
           <!--worked_onは日付のカラムを表し、wdayは曜日に変換するメソッド-->
           <!--例：day.worked_onは=> Tue, 01 Oct 2019　/ これに.wdayすると =>2 つまり火曜日となる-->
-          <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+          <% $days_of_the_week[day.worked_on.wday] %>
           <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
           <% if day.worked_on.wday == 0 %>
-            <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+            <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
           <% elsif day.worked_on.wday == 6 %>
-            <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+            <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
           <% else %>
-            <%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
+            <%= $days_of_the_week[day.worked_on.wday] %>
           <% end %>
         </td>
         <!--もし出社時間が存在すれば時間を表示-->
@@ -98,10 +109,12 @@
         <!--もし出社時間が存在すれば分を15分単位で表示-->
         <td><%= l(day.started_at.floor_to(15.minutes), format: :min) if day.started_at.present? %></td>
         <td>
-          <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
-          <% if day.worked_on == Date.today && day.started_at.nil? %>
-            <!--user_attendances_path →　attendances#create createする-->
-            <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <% if @user.id == current_user.id %>
+            <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
+            <% if day.worked_on == Date.today && day.started_at.nil? %>
+              <!--user_attendances_path →　attendances#create createする-->
+              <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+            <% end %>
           <% end %>
         </td>
         <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>

@@ -23,6 +23,11 @@ class Attendance < ApplicationRecord
       errors.add(:started_at, "より早い退勤時刻は無効です。") if started_at > finished_at
     end
   end
+
+  # 1ヶ月勤怠申請
+  enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4 }
+  # 1ヶ月勤怠申請チェックボックス
+  # validates :month_check, :acceptance =>true
+
 end
 
-# user_idはユーザーと勤怠情報を紐付けるカラムだが、自動で存在性の検証を行う為バリデーションは不要

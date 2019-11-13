@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   patch 'users/:id/attendances/:id/update_overwork_receive', to: 'users#update_overwork_receive', as: :update_overwork_receive
   # 1ヶ月分勤怠申請/showページ右下申請ボタン
   patch 'users/:id/attendances/:id/update_month', to: 'attendances#update_month', as: :update_month
+  # 1ヶ月分勤怠申請/モーダル表示
+  get 'users/:id/attendances/:id/month_approval', to: 'attendances#month_approval', as: :month_approval
+  # 1ヶ月分勤怠申請/モーダル内/指示者確認印更新お知らせ
+  patch 'users/:id/attendances/:id/update_approval', to: 'attendances#update_approval', as: :update_approval
 
   
   resources :users do
@@ -38,4 +42,5 @@ Rails.application.routes.draw do
   # 拠点情報ルーティング
   resources :bases
 end
+
 

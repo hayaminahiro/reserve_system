@@ -69,9 +69,6 @@ module AttendancesHelper
     end
     return superior
   end
-
-
-
 end
 
 
