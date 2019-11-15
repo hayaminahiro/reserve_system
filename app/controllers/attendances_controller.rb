@@ -47,9 +47,12 @@ class AttendancesController < ApplicationController
 
   # 申請ボタンから送信された情報（上長のidと申請月）を受け取って更新
   def update_month
+    # params[:user][:apply_month] = @first_day
     # 申請先上長が選択されているか確認するヘルパーメソッド
     if superior_present?
+      # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
       update_month_params.each do |id, item|
+        # 更新するべきAttendanceモデルオブジェクトを探してattendanceに代入
         attendance = Attendance.find(id)
         attendance.update_attributes(item)
       end
@@ -78,12 +81,14 @@ class AttendancesController < ApplicationController
 
   # 申請の承認可否の更新
   def update_approval
-      update_approval_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes(item)
-      end
-      flash[:success] = "所属長申請しました。"
-      redirect_to @user
+    @user = User.find(params[:id])
+    update_approval_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(item)
+    end
+    flash[:success] = "1ヶ月申請しました。"
+    redirect_to user_path(@user)
+
   end
 
 
@@ -115,7 +120,11 @@ class AttendancesController < ApplicationController
     end
 
     # 申請の承認可否の更新
-    
+    def update_approval_params
+      params.permit(attendances: [:month_approval, :month_check])[:attendances]
+    end
+
+
     # beforeアクション
 
     def set_user

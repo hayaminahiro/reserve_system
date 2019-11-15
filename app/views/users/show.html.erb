@@ -120,9 +120,11 @@
         <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
         <td><%= l(day.finished_at.floor_to(15.minutes), format: :min) if day.finished_at.present? %></td>
         <td>
-          <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
-          <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
-            <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <% if @user.id == current_user.id %>
+            <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
+            <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
+              <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+            <% end %>
           <% end %>
         </td>
         <td>
