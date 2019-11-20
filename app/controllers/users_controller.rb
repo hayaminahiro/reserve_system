@@ -51,12 +51,10 @@ class UsersController < ApplicationController
       end
     end
     @dates = user_attendances_month_date
-
     @worked_sum = @dates.where.not(started_at: nil).count
     @attendance = User.all.includes(:attendances)
-    # 申請ボタンで選択された上長カラムがcurrent_userの数
-    @month_count = Attendance.where(superior_id: current_user.id).count
-
+    # チェックボックスにチェックが入っていないカウント数表示
+    @month_count = Attendance.where(superior_id: current_user).where(month_check: false).count
   end
   
   def new
@@ -126,8 +124,6 @@ class UsersController < ApplicationController
   end
   def update_overwork_receive
   end
-
-
 
   private
   

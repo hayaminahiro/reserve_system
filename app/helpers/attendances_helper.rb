@@ -39,21 +39,37 @@ module AttendancesHelper
     @user.attendances.where('worked_on >= ? and worked_on <= ?', @first_day, @last_day).order('worked_on')
   end
   
-  # 不正な値があるか確認する
+  # 不正な値があるか確認する・・・出勤時間と退勤時間
   def attendances_invalid?
-    attendances = true
+    attendances = true #不正な値がない状態でスタート → true
     attendances_params.each do |id, item|
+      # ①出勤時間と退勤h時間が空白の場合、nextで次の繰り返し処理が続行
       if item[:started_at].blank? && item[:finished_at].blank?
         next
+      # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
       elsif item[:started_at].blank? || item[:finished_at].blank?
         attendances = false
         break
+      # ③出勤時間が退勤時間より大きい場合 → 処理を終了しfalseを返す
       elsif item[:started_at] > item[:finished_at]
         attendances = false
         break
       end
     end
-    return attendances
+    # ①問題ないのでtrueを返す、②③問題ありfalseを返す
+    attendances
+  end
+
+  # 1ヶ月申請「変更を送信する」ボタン：選択肢の確認
+  def apply_and_checkbox_invalid?(ma, mc) # 引数：ma = item[:month_approval]、引数：mc = item[:month_check]
+    # (承認or否認) かつ チェックボックスON ➡︎ 唯一trueの処理
+    # mcはデバッガー確認時"0","1"でありtrue,falseではない。"◯"で文字列として扱う必要がある
+    if (ma == "承認" || ma == "否認") and mc == "1" #and優先順位低い
+      apply = true
+    else # それ以外の処理は全てNG
+      apply = false
+    end
+    apply
   end
 
   # 申請先上長が選択されているか確認
@@ -67,8 +83,9 @@ module AttendancesHelper
         break
       end
     end
-    return superior
+    superior
   end
+
 end
 
 

@@ -47,11 +47,8 @@ class AttendancesController < ApplicationController
 
   # 申請ボタンから送信された情報（上長のidと申請月）を受け取って更新
   def update_month
-    # params[:user][:apply_month] = @first_day
-    # 申請先上長が選択されているか確認するヘルパーメソッド
-    if superior_present?
-      # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
-      update_month_params.each do |id, item|
+    if superior_present? # params[:user][:apply_month] = @first_day /申請先上長が選択されているか確認
+      update_month_params.each do |id, item| # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
         # 更新するべきAttendanceモデルオブジェクトを探してattendanceに代入
         attendance = Attendance.find(id)
         attendance.update_attributes(item)
@@ -63,7 +60,7 @@ class AttendancesController < ApplicationController
 
   # 1ヶ月分勤怠申請/モーダル表示
   def month_approval
-    @users = User.all
+    @users = User.applied_superior(superior_id: current_user.id)
     @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
     @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
     (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
@@ -72,31 +69,48 @@ class AttendancesController < ApplicationController
         record.save
       end
     end
-    # 1ヶ月の情報を表す・・・attendances_helper.rb参照
-    @dates = user_attendances_month_date
+    @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
     @attendance = User.all.includes(:attendances)
     # 申請ボタンで選択された上長カラムがcurrent_userの数
     @month_count = Attendance.where(superior_id: current_user.id).count
   end
 
+  # # 申請の承認可否の更新
+  # def update_approval
+  #   @user = User.find(params[:id])
+  #   # update_approval_paramsをeachで回す
+  #   update_approval_params.each do |id, item|
+  #     # もしapply_and_checkbox_invalid? ➡︎ 引数が(item[:month_approval], item[:month_check])の場合
+  #     # each分の中にヘルパーメソッドを記入する事で毎回処理をチェックできる
+  #     if apply_and_checkbox_invalid?(item[:month_approval], item[:month_check]) # 処理がtrueになったら更新
+  #       # eachで回ってきた該当するidのAttendanceオブジェクトをattendanceに代入
+  #       attendance = Attendance.find(id)
+  #       attendance.update_attributes(item)
+  #     end
+  #   end
+  #   flash[:success] = "1ヶ月分の勤怠申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
+  #   redirect_to user_path(@user)
+  # end
+
   # 申請の承認可否の更新
   def update_approval
     @user = User.find(params[:id])
+    # update_approval_paramsをeachで回す
     update_approval_params.each do |id, item|
-      attendance = Attendance.find(id)
-      attendance.update_attributes(item)
+      # もしapply_and_checkbox_invalid? ➡︎ 引数が(item[:month_approval], item[:month_check])の場合
+      # each分の中にヘルパーメソッドを記入する事で毎回処理をチェックできる
+      if apply_and_checkbox_invalid?(item[:month_approval], item[:month_check]) # 処理がtrueになったら更新
+        # eachで回ってきた該当するidのAttendanceオブジェクトをattendanceに代入
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)
+      end
     end
-    flash[:success] = "1ヶ月申請しました。"
+    flash[:success] = "1ヶ月分の勤怠申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
     redirect_to user_path(@user)
-
   end
-
-
-
 
   def month_attendances_confirmation
     # 月の情報
-
     # @user = User.find(params[:id])
     # @attendances = Attendance.all
     # # (params[:day])で受け取ったデータを日付に変換し@dayに格納
@@ -116,14 +130,13 @@ class AttendancesController < ApplicationController
 
     # 申請した上長idと申請月
     def update_month_params
-      params.permit(attendances: [:superior_id, :apply_month])[:attendances]
+      params.permit(attendances: [:superior_id, :apply_month, :month_approval, :month_check])[:attendances]
     end
 
     # 申請の承認可否の更新
     def update_approval_params
       params.permit(attendances: [:month_approval, :month_check])[:attendances]
     end
-
 
     # beforeアクション
 

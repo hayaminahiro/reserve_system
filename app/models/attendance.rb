@@ -1,7 +1,7 @@
 class Attendance < ApplicationRecord
   # Attendanceモデルから見たuserモデルとの関連性は1対1
   belongs_to :user
-  
+
   # 日付は必須
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
@@ -25,9 +25,7 @@ class Attendance < ApplicationRecord
   end
 
   # 1ヶ月勤怠申請
-  enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4 }
-  # 1ヶ月勤怠申請チェックボックス
-  # validates :month_check, :acceptance =>true
+  enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3 }
 
 end
 

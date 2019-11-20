@@ -80,22 +80,10 @@ class User < ApplicationRecord
     ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", 
     "designated_work_start_time", "designated_work_end_time", "admin", "password"]
   end
+
+  # 自分以外の上長id
+  def self.applied_superior(superior_id: user)
+    joins(:attendances).where.not(attendances: {user_id: superior_id}).distinct
+  end
+
 end
-
-# モデルとは何か説明・・・まずMVCに分類し簡単に説明
-# ・モデル（Model）：表示や入力に関連しない処理
-# ・ビュー（View）：表示や入力に関する処理
-# ・コントローラ（Controller）：ビューとモデルの橋渡し役
-
-# モデルとはどんなデータ構成をしているか表したもの
-# 例えばUserモデル：
-# カラムにはnameとemailがあり、それぞれのデータ型はstringである・・・というような。
-#
-# railsで情報を保存する場合、リレーショナルデータベースを使用しますが、
-# これはデータが行で構成されるテーブル構造になっています。
-#
-# nameとemailをカラムに持つユーザーをデータベースに保存する場合、usersテーブルが必要
-# 各行に１ユーザーを保存します。
-
-
-
