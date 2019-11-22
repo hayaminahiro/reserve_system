@@ -13,7 +13,6 @@
           </div>
         </td>
       <% end %>
-      
       <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
           指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
       <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
@@ -149,7 +148,6 @@
       </tr>
     <% end %>
   </tbody>
-
   <tfoot>
     <tr>
       <td colspan="3"></td>
@@ -158,7 +156,6 @@
       <!--str.to_f / 文字列の先頭から浮動小数点数と見なせる部分を切り取って変換 / 見なせる部分がなければ0.0を返す-->
       <!--基本情報時間 * @worked_sum(出勤日数合計) = 総合勤務時間を format_basic_info でフォーマット化する-->
       <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_work_time).to_f * @worked_sum %>h</td>
-
       <!--@total_secondsがnilでない場合、秒数単位の@total_secondsをworking_times_sumで勤務時間の合計数を出す-->
       <!--working_times_sum：勤務時間の合計（attendanceヘルパー参照）-->
       <td colspan="2">在社時間合計 <%= working_times_sum(@total_seconds.floor_to(15.minutes)) unless @total_seconds.nil? %>h</td>
@@ -170,10 +167,8 @@
     </tr>
   </tfoot>
 </table>
-
 <!--残業申請モーダルウインドウ表示-->
 <div id="edit_overwork_request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="edit_overwork_receive" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
 <!--iヶ月勤怠申請モーダルウィンドウ表示-->
 <div id="month_attendances_confirmation" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

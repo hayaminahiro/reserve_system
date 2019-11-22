@@ -4,12 +4,20 @@
       <div class="modal-position">
         <div class="modal-content">
           <!--モーダルヘッダー-->
-          <div class="modal-header">
-              <h4 class="modal-title">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+          <% attendances = Attendance.where(user_id: user.id) %>
+          <% attendances.each do |at| %>
+            <% if at.superior_id == current_user.id%>
+              <% if at.month_approval == "申請中" || at.month_check == false %>
+                <div class="modal-header">
+                    <h4 class="modal-title">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <% break %>
+              <% end %>
+            <% end %>
+          <% end %>
           <% attendances = Attendance.where(user_id: user.id) %>
           <% attendances.each do |at| %>
             <% if at.superior_id == current_user.id%>
@@ -47,12 +55,20 @@
             <% end %>
           <% end %>
           <!--モーダルフッター-->
-          <div class="modal-footer">
-            <p>⚠️ ①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
-            <div id="change-btn">
-              <%= f.submit "変更を送信する", class: "btn btn-primary" %>
-            </div>
-          </div>
+          <% attendances = Attendance.where(user_id: user.id) %>
+          <% attendances.each do |at| %>
+            <% if at.superior_id == current_user.id%>
+              <% if at.month_approval == "申請中" || at.month_check == false %>
+                <div class="modal-footer">
+                  <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
+                  <div id="change-btn">
+                    <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                  </div>
+                </div>
+                <% break %>
+              <% end %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     <% end %>

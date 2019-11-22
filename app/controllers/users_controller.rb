@@ -55,6 +55,12 @@ class UsersController < ApplicationController
     @attendance = User.all.includes(:attendances)
     # チェックボックスにチェックが入っていないカウント数表示
     @month_count = Attendance.where(superior_id: current_user).where(month_check: false).count
+    # applied_superior ➡︎ 自分以外の上長id
+    @users = User.applied_superior(superior_id: current_user.id)
+    # 申請上長の名前
+    @superior_a = User.find_by(id: 2).name #上長A
+    @superior_b = User.find_by(id: 3).name #上長A
+    @superior_c = User.find_by(id: 4).name #上長A
   end
   
   def new
