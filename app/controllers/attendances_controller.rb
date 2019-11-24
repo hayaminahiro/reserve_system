@@ -24,11 +24,14 @@ class AttendancesController < ApplicationController
     end
     redirect_to @user
   end
-  
+
+  # 勤怠編集画面
   def edit
     @first_day = first_day(params[:date])
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
+    # 自分以外の上長
+    @users = User.applied_superior(superior_id: current_user.id)
   end
   
   def update
@@ -74,23 +77,6 @@ class AttendancesController < ApplicationController
     # 申請ボタンで選択された上長カラムがcurrent_userの数
     @month_count = Attendance.where(superior_id: current_user.id).count
   end
-
-  # # 申請の承認可否の更新
-  # def update_approval
-  #   @user = User.find(params[:id])
-  #   # update_approval_paramsをeachで回す
-  #   update_approval_params.each do |id, item|
-  #     # もしapply_and_checkbox_invalid? ➡︎ 引数が(item[:month_approval], item[:month_check])の場合
-  #     # each分の中にヘルパーメソッドを記入する事で毎回処理をチェックできる
-  #     if apply_and_checkbox_invalid?(item[:month_approval], item[:month_check]) # 処理がtrueになったら更新
-  #       # eachで回ってきた該当するidのAttendanceオブジェクトをattendanceに代入
-  #       attendance = Attendance.find(id)
-  #       attendance.update_attributes(item)
-  #     end
-  #   end
-  #   flash[:success] = "1ヶ月分の勤怠申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
-  #   redirect_to user_path(@user)
-  # end
 
   # 申請の承認可否の更新
   def update_approval

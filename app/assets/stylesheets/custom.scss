@@ -170,9 +170,17 @@ input {
 // ボタン
 .btn-attendances-update {
   position: relative;
-  width: 30%;
-  margin: auto;
-  left: 25%; 
+  width: 25%;
+  margin: 4px;
+  left: 20%;
+  float: left;
+}
+
+.btn-attendances-cancel {
+  position: relative;
+  width: 25%;
+  margin: 9px;
+  left: 20%;
   float: left;
 }
 

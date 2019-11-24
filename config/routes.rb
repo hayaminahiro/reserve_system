@@ -26,7 +26,8 @@ Rails.application.routes.draw do
   get 'users/:id/attendances/:id/month_approval', to: 'attendances#month_approval', as: :month_approval
   # 1ヶ月分勤怠申請/モーダル内/指示者確認印更新お知らせ
   patch 'users/:id/attendances/:id/update_approval', to: 'attendances#update_approval', as: :update_approval
-
+  # 勤怠変更申請
+  patch 'users/:id/attendances/:id/update_attendance', to: 'attendances#update_attendance', as: :update_attendance
   
   resources :users do
     get 'currently_working', on: :collection

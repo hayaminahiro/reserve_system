@@ -12,6 +12,7 @@
           <th>退社時間</th>
           <th>在社時間</th>
           <th>備考</th>
+          <th>指示者確認㊞</th>
         </tr>
       </thead>
       
@@ -48,6 +49,7 @@
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
+              <td><%= af.collection_select :superior_id, @users, :id, :name, {}, class: 'form-control' %></td>
             </tr>
           <% end %>
         <% end %>
@@ -57,9 +59,9 @@
     <!--更新・キャンセルボタン-->
     <div class="btn-attendances-center">
       <div class="btn-attendances-update">
-        <%= f.submit "更新する", class: "btn btn-primary" %>
+        <%= f.submit "編集を保存する", class: "btn btn-primary" %>
       </div>
-      <div class="btn-attendances-update">
+      <div class="btn-attendances-cancel">
         <%= link_to "キャンセル", user_path(@user, params:{first_day: @first_day}), class: "btn btn-default btn-block" %>
       </div>
     </div>
