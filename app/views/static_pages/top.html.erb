@@ -1,5 +1,4 @@
 <% provide(:title, "Top") %>
-
 <div class="center jumbotron">
   <% if logged_in? %>
     <!--ログイン済みUser表示用-->
@@ -8,13 +7,10 @@
     <div id="set-btn">
       <%= link_to "　#{current_user.name} / 設定　", edit_user_path(current_user.id), class: "btn btn-lg btn-primary" %>
     </div>
-
   <% else %>
     <!--未ログインUser表示用-->
     <h1>勤怠システム</h1>
     <%= link_to "ログイン", login_path, class: "btn btn-lg btn-primary" %>
     <p>アカウント作成は<%= link_to "こちら", signup_path %>から</p>
   <% end %>
-
-
 </div>

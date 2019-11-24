@@ -49,7 +49,7 @@
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id, @users, :id, :name, {}, class: 'form-control' %></td>
+              <td><%= af.collection_select :superior_id, @users, :id, :name, {:prompt => "申請先を選択してください。"}, {class: "form-control"} %></td>
             </tr>
           <% end %>
         <% end %>

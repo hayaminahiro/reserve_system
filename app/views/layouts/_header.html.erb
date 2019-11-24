@@ -1,12 +1,10 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
     <%= link_to "勤怠システム", root_path, id: "logo" %>
-    <nav>
       <ul class="nav navbar-nav navbar-right">
         <li><%= link_to "トップへ", root_path %></li>
         <!--条件式・・・ログイン ＆ 管理者 ＆ 現在のユーザー-->
         <% if logged_in? %>
-          
           <% if current_user.admin? %>
             <!--この部分は一般ユーザーに表示しない-->
             <li><%= link_to "ユーザーー覧", users_path %></li>
@@ -14,14 +12,12 @@
             <li><%= link_to "拠点情報の修正", bases_path %></li>
             <li><%= link_to "基本情報の修正", basic_info_path(current_user) %></li>
           <% end %>
-          
           <!--ドロップダウンメニュー-->
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               アカウント<b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              
               <% if not current_user.admin? %>
                 <li><%= link_to "ユーザー勤怠情報表示", current_user %></li>
               <% end %>
