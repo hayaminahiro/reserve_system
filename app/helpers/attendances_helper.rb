@@ -86,6 +86,15 @@ module AttendancesHelper
     superior
   end
 
+  # 上長が選択されていればtrueを返す(上長だけ選択して申請できなくする)
+  def attendance_superior_present?(superior_id, start, finish)
+    if superior_id.present? && start.present? && finish.present?
+      apply = true
+    else
+      apply = false
+    end
+    apply
+  end
 end
 
 

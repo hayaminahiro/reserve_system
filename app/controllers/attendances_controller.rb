@@ -33,14 +33,17 @@ class AttendancesController < ApplicationController
     # 自分以外の上長
     @users = User.applied_superior(superior_id: current_user.id)
   end
-  
+
+  # 勤怠情報update
   def update
     if attendances_invalid?
       attendances_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes(item)
+        if attendance_superior_present?(item[:superior_id], item[:started_at], item[:finished_at] )
+          attendance = Attendance.find(id)
+          attendance.update_attributes(item)
+        end
       end
-      flash[:success] = "勤怠情報を更新しました。"
+      flash[:success] = "勤怠情報を申請しました。申請できていない場合は申請先上長が選択されているか確認して下さい。"
       redirect_to user_url(@user, params:{first_day: params[:date]})
     else
       flash[:danger] = "不正な時間入力がありました。再入力して下さい。出社時間と退社時間はセットで入力されていますか？"
@@ -111,7 +114,7 @@ class AttendancesController < ApplicationController
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
       # {"1" => {"started_at"=>"10:00", "finished_at"=>"18:00", "note"=>"シフトA"}
-      params.permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+      params.permit(attendances: [:started_at, :finished_at, :note, :tomorrow_check, :superior_id])[:attendances]
     end
 
     # 申請した上長idと申請月

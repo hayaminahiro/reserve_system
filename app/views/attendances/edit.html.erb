@@ -2,7 +2,6 @@
 <%= form_with(model: @user, url: update_attendances_path(params: {id: @user.id}), local: true, method: :patch) do |f| %>
   <div>
     <h1>勤怠編集画面</h1>
-
     <table class="table table-striped table-bordered table-condensed table-hover user-table">
       <thead>
         <tr>
@@ -10,12 +9,12 @@
           <th>曜日</th>
           <th>出社時間</th>
           <th>退社時間</th>
+          <th>翌日</th>
           <th>在社時間</th>
           <th>備考</th>
           <th>指示者確認㊞</th>
         </tr>
       </thead>
-      
       <tbody>
         <!--@dates = user_attendances_month_date ユーザーに基づく1ヶ月間の値-->
         <% @dates.each do |day| %>
@@ -42,6 +41,8 @@
                 <td><%= af.time_field :started_at, class: 'form-control' %></td>
                 <td><%= af.time_field :finished_at, class: 'form-control' %></td>
               <% end %>
+              <td width="40">
+                <%= af.check_box :tomorrow_check %></td>
               <td>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
@@ -49,13 +50,12 @@
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id, @users, :id, :name, {:prompt => "申請先を選択してください。"}, {class: "form-control"} %></td>
+              <td><%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true}, {class: "form-control"} %></td>
             </tr>
           <% end %>
         <% end %>
       </tbody>
     </table>
-    
     <!--更新・キャンセルボタン-->
     <div class="btn-attendances-center">
       <div class="btn-attendances-update">
