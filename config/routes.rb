@@ -24,10 +24,14 @@ Rails.application.routes.draw do
   patch 'users/:id/attendances/:id/update_month', to: 'attendances#update_month', as: :update_month
   # 1ヶ月分勤怠申請/モーダル表示
   get 'users/:id/attendances/:id/month_approval', to: 'attendances#month_approval', as: :month_approval
-  # 1ヶ月分勤怠申請/モーダル内/指示者確認印更新お知らせ
+  # 1ヶ月分勤怠申請/モーダル内/変更送信ボタン
   patch 'users/:id/attendances/:id/update_approval', to: 'attendances#update_approval', as: :update_approval
   # 勤怠変更申請
   patch 'users/:id/attendances/:id/update_attendance', to: 'attendances#update_attendance', as: :update_attendance
+  # 勤怠変更申請/モーダル表示
+  get 'users/:id/attendances/:id/attendance_approval', to: 'attendances#attendance_approval', as: :attendance_approval
+  # 1ヶ月分勤怠申請/モーダル内/変更送信ボタン
+  patch 'users/:id/attendances/:id/update_applicability', to: 'attendances#update_applicability', as: :update_applicability
   
   resources :users do
     get 'currently_working', on: :collection

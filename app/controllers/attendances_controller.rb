@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :update_month, :month_approval]
+  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -51,6 +51,21 @@ class AttendancesController < ApplicationController
     end
   end
 
+  # 勤怠変更申請表示モーダル
+  def attendance_approval
+    @users = User.applied_superior(superior_id: current_user.id)
+    @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
+    @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
+    (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
+      unless @user.attendances.any? {|attendance| attendance.worked_on == day}
+        record = @user.attendances.build(worked_on: day)
+        record.save
+      end
+    end
+    @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
+    @attendance = User.all.includes(:attendances)
+  end
+
   # 申請ボタンから送信された情報（上長のidと申請月）を受け取って更新
   def update_month
     if superior_present? # params[:user][:apply_month] = @first_day /申請先上長が選択されているか確認
@@ -77,8 +92,6 @@ class AttendancesController < ApplicationController
     end
     @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
     @attendance = User.all.includes(:attendances)
-    # 申請ボタンで選択された上長カラムがcurrent_userの数
-    @month_count = Attendance.where(superior_id: current_user.id).count
   end
 
   # 申請の承認可否の更新
