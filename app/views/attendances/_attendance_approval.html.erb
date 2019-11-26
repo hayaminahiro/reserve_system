@@ -6,53 +6,91 @@
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
           <% attendances.each do |at| %>
             <% if at.superior_id == current_user.id %>
-              <%# if at.month_approval == "申請中" || at.month_check == false %>
-<!--                <%# if at.apply_month.present? %> <!--1ヶ月申請特有のapply_monthカラムで表示可否判定-->-->
-                  <div class="modal-header">
-                    <h4 class="modal-title">【<%= user.name %>からの勤怠変更申請】</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <% break %>
-                <%# end %>
-              <%# end %>
+              <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
+                <div class="modal-header">
+                  <h4 class="modal-title">【<%= user.name %>からの勤怠変更申請】</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <% break %>
+              <% end %>
             <% end %>
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %>
           <% attendances.each do |at| %>
             <% if at.superior_id == current_user.id%>
-              <% if at.month_approval == "申請中" || at.month_check == false %>
-                <% if at.apply_month.present? %>
-                  <div class="modal-body"> <!--モーダルボディ-->
-                    <table class="table table-bordered">
-                      <thead>
+              <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
+                <div class="modal-body"> <!--モーダルボディ-->
+                  <table class="table table-bordered">
+                    <thead>
                       <tr>
-                        <th class="title-position">月</th>
-                        <th class="title-position">指示者確認㊞</th>
-                        <th class="title-position">変更</th>
-                        <th class="title-position">勤怠を確認する</th>
+                        <th rowspan="3" class="title-position">日付</th>
+                        <th rowspan="3" class="title-position">曜日</th>
+                        <th colspan="4" class="title-position">変更前</th>
+                        <th colspan="4" class="title-position">変更後</th>
+                        <th rowspan="3" class="title-position">備考</th>
+                        <th rowspan="3" class="title-position">指示者確認㊞</th>
+                        <th rowspan="3" class="title-position">変更</th>
+                        <th rowspan="3" class="title-position">勤怠を確認する</th>
                       </tr>
-                      </thead>
-                      <%= fields_for "attendances[]", at do |af| %>
-                        <tbody>
-                        <tr>
-                          <td><%= l(at.apply_month, format: :month) %></td>
-                          <td class="select-approval">
-                            <%= af.select :month_approval, Attendance.month_approvals.keys.to_a, {}, { class: "form-control" } %>
-                          </td>
-                          <td width="45px">
-                            <%= af.check_box :month_check, incude_hidden: false %>
-                          </td>
-                          <td>
-                            <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month ), class: 'btn btn-primary' %>
-                          </td>
-                        </tr>
-                        </tbody>
-                      <% end %>
-                    </table>
-                  </div>
-                <% end %>
+                      <tr>
+                        <th colspan="2" class="title-position">出社</th>
+                        <th colspan="2" class="title-position">退社</th>
+                        <th colspan="2" class="title-position">出社</th>
+                        <th colspan="2" class="title-position">退社</th>
+                      </tr>
+                      <tr>
+                        <th class="title-position">時</th>
+                        <th class="title-position">分</th>
+                        <th class="title-position">時</th>
+                        <th class="title-position">分</th>
+                        <th class="title-position">時</th>
+                        <th class="title-position">分</th>
+                        <th class="title-position">時</th>
+                        <th class="title-position">分</th>
+                      </tr>
+                    </thead>
+                    <%= fields_for "attendances[]", at do |af| %>
+                      <tbody>
+                      <tr>
+                        <td><%= l(at.worked_on, format: :short1) %></td>
+                        <td>
+                          <% $days_of_the_week[at.worked_on.wday] %>
+                          <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+                          <% if at.worked_on.wday == 0 %>
+                            <font color="red"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                          <% elsif at.worked_on.wday == 6 %>
+                            <font color="blue"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                          <% else %>
+                            <%= $days_of_the_week[at.worked_on.wday] %>
+                          <% end %>
+                        </td>
+                        <% if at.started_at.present? && at.finished_at.present? %>
+                          <td><%= l(at.started_at, format: :hour) %></td>
+                          <td><%= l(at.started_at.floor_to(15.minutes), format: :min) %></td>
+                          <td><%= l(at.finished_at, format: :hour) %></td>
+                          <td><%= l(at.finished_at.floor_to(15.minutes), format: :min) %></td>
+                        <% end %>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><%= at.note %></td>
+                        <td class="select-approval">
+                          <%= af.select :attendance_approval, Attendance.attendance_approvals.keys.to_a, {}, { class: "form-control" } %>
+                        </td>
+                        <td width="45px">
+                          <%= af.check_box :month_check, incude_hidden: false %>
+                        </td>
+                        <td>
+                          <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month ), class: 'btn btn-primary' %>
+                        </td>
+                      </tr>
+                      </tbody>
+                    <% end %>
+                  </table>
+                </div>
               <% end %>
             <% end %>
           <% end %>
