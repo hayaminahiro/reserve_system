@@ -35,18 +35,31 @@
               <!--未来の勤怠情報の編集はできない-->
               <!--if !current_user.admin? && ⇨ 仕様書テストNO,22に基づき削除-->
               <% if Date.current < day.worked_on %>
-                <td><%= af.time_field :started_at, readonly: true, class: 'form-control' %></td>
-                <td><%= af.time_field :finished_at, readonly: true, class: 'form-control' %></td>
+                <td><%= af.time_field :change_started, readonly: true, class: 'form-control' %></td>
+                <td><%= af.time_field :change_finished, readonly: true, class: 'form-control' %></td>
               <% else %>
-                <td><%= af.time_field :started_at, class: 'form-control' %></td>
-                <td><%= af.time_field :finished_at, class: 'form-control' %></td>
+                <td>
+                  <%= af.time_field :change_started, class: 'form-control' %>
+                  <!--判断材料として変更前の出勤記録も表示-->
+                  <%= l(day.started_at, format: :time) if day.started_at.present? %>
+                </td>
+                <td>
+                  <%= af.time_field :change_finished, class: 'form-control' %>
+                  <!--判断材料として変更前の退勤記録も表示-->
+                  <%= l(day.finished_at, format: :time) if day.finished_at.present? %>
+                </td>
               <% end %>
               <td width="40">
                 <%= af.check_box :tomorrow_check %></td>
               <td>
+                <!--変更後の在社時間-->
+                <% if day.change_started.present? && day.change_finished.present? %>
+                  変更後 <%= working_times(day.change_started, day.change_finished) %>
+                <% end %>
+                </br>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at, day.finished_at) %>
+                  変更前  <%= working_times(day.started_at, day.finished_at) %>
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>

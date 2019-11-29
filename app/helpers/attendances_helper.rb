@@ -39,19 +39,19 @@ module AttendancesHelper
     @user.attendances.where('worked_on >= ? and worked_on <= ?', @first_day, @last_day).order('worked_on')
   end
   
-  # 不正な値があるか確認する・・・出勤時間と退勤時間
+  # 不正な値があるか確認する・・・変更出勤時間と変更退勤時間
   def attendances_invalid?
     attendances = true #不正な値がない状態でスタート → true
     attendances_params.each do |id, item|
       # ①出勤時間と退勤h時間が空白の場合、nextで次の繰り返し処理が続行
-      if item[:started_at].blank? && item[:finished_at].blank?
+      if item[:change_started].blank? && item[:change_finished].blank?
         next
       # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
-      elsif item[:started_at].blank? || item[:finished_at].blank?
+      elsif item[:change_started].blank? || item[:change_finished].blank?
         attendances = false
         break
       # ③出勤時間が退勤時間より大きい場合 → 処理を終了しfalseを返す
-      elsif item[:started_at] > item[:finished_at]
+      elsif item[:change_started] > item[:change_finished]
         attendances = false
         break
       end

@@ -72,10 +72,12 @@
                           <td><%= l(at.finished_at, format: :hour) %></td>
                           <td><%= l(at.finished_at.floor_to(15.minutes), format: :min) %></td>
                         <% end %>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <% if at.change_started.present? && at.change_finished.present? %>
+                          <td><%= l(at.change_started, format: :hour) %></td>
+                          <td><%= l(at.change_started.floor_to(15.minutes), format: :min) %></td>
+                          <td><%= l(at.change_finished, format: :hour) %></td>
+                          <td><%= l(at.change_finished.floor_to(15.minutes), format: :min) %></td>
+                        <% end %>
                         <td><%= at.note %></td>
                         <td class="select-approval">
                           <%= af.select :attendance_approval, Attendance.attendance_approvals.keys.to_a, {}, { class: "form-control" } %>
