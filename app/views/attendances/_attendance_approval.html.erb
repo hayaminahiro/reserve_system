@@ -71,6 +71,11 @@
                           <td><%= l(at.started_at.floor_to(15.minutes), format: :min) %></td>
                           <td><%= l(at.finished_at, format: :hour) %></td>
                           <td><%= l(at.finished_at.floor_to(15.minutes), format: :min) %></td>
+                        <% else %>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         <% end %>
                         <% if at.change_started.present? && at.change_finished.present? %>
                           <td><%= l(at.change_started, format: :hour) %></td>
@@ -83,7 +88,7 @@
                           <%= af.select :attendance_approval, Attendance.attendance_approvals.keys.to_a, {}, { class: "form-control" } %>
                         </td>
                         <td width="45px">
-                          <%= af.check_box :month_check, incude_hidden: false %>
+                          <%= af.check_box :attendance_check, incude_hidden: false %>
                         </td>
                         <td>
                           <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month ), class: 'btn btn-primary' %>
@@ -98,18 +103,15 @@
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルフッター-->
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id%>
-              <%# if at.month_approval == "申請中" || at.month_check == false %>
-                <%# if at.apply_month.present? %>
-                  <div class="modal-footer">
-                    <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
-                    <div id="change-btn">
-                      <%= f.submit "変更を送信する", class: "btn btn-primary" %>
-                    </div>
+            <% if at.superior_id == current_user.id %>
+              <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
+                <div class="modal-footer">
+                  <div id="change-btn">
+                    <%= f.submit "変更を送信する", class: "btn btn-primary" %>
                   </div>
+                </div>
                 <% break %>
-                <%# end %>
-              <%# end %>
+              <% end %>
             <% end %>
           <% end %>
         </div>

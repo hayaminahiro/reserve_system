@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   patch 'users/:id/attendances/:id/update_attendance', to: 'attendances#update_attendance', as: :update_attendance
   # 勤怠変更申請/モーダル表示
   get 'users/:id/attendances/:id/attendance_approval', to: 'attendances#attendance_approval', as: :attendance_approval
-  # 1ヶ月分勤怠申請/モーダル内/変更送信ボタン
+  # 勤怠変更申請/モーダル内/変更送信ボタン
   patch 'users/:id/attendances/:id/update_applicability', to: 'attendances#update_applicability', as: :update_applicability
   
   resources :users do

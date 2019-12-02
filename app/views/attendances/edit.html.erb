@@ -41,29 +41,35 @@
                 <td>
                   <%= af.time_field :change_started, class: 'form-control' %>
                   <!--判断材料として変更前の出勤記録も表示-->
-                  <%= l(day.started_at, format: :time) if day.started_at.present? %>
+                  <font color="red"><%= l(day.started_at.floor_to(15.minutes), format: :time) if day.started_at.present? %></font>
                 </td>
                 <td>
                   <%= af.time_field :change_finished, class: 'form-control' %>
                   <!--判断材料として変更前の退勤記録も表示-->
-                  <%= l(day.finished_at, format: :time) if day.finished_at.present? %>
+                  <font color="red"><%= l(day.finished_at.floor_to(15.minutes), format: :time) if day.finished_at.present? %></font>
                 </td>
               <% end %>
               <td width="40">
-                <%= af.check_box :tomorrow_check %></td>
+                <%= af.check_box :tomorrow_check, :as => :boolean %></td>
               <td>
                 <!--変更後の在社時間-->
-                <% if day.change_started.present? && day.change_finished.present? %>
-                  変更後 <%= working_times(day.change_started, day.change_finished) %>
+                <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %>
+                  <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+                <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %>
+                  <font color="blue">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
                 <% end %>
                 </br>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  変更前  <%= working_times(day.started_at, day.finished_at) %>
+                  <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true}, {class: "form-control"} %></td>
+              <td><%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+              <!--裏側でattendance_approval == "申請中"を渡したい-->
+              <%= af.hidden_field :attendance_approval, value: "申請中" %>
+              <!--裏側でattendance_check == falseにしたい-->
+              <%= af.hidden_field :attendance_check, :value => false %>
             </tr>
           <% end %>
         <% end %>

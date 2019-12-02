@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval]
+  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval, :update_approval, :update_applicability]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -39,23 +39,21 @@ class AttendancesController < ApplicationController
     if attendances_invalid?
       attendances_params.each do |id, item|
         if attendance_superior_present?(item[:superior_id], item[:change_started], item[:change_finished] )
-          raise
           attendance = Attendance.find(id)
           attendance.update_attributes(item)
         end
       end
       flash[:success] = "勤怠情報を申請しました。申請できていない場合は申請先上長が選択されているか確認して下さい。"
       redirect_to user_url(@user, params:{first_day: params[:date]})
-      raise
     else
       flash[:danger] = "不正な時間入力がありました。再入力して下さい。出社時間と退社時間はセットで入力されていますか？"
       redirect_to edit_attendances_path(@user, params[:date])
-      raise
     end
   end
 
   # 勤怠変更申請表示モーダル
   def attendance_approval
+    # @users = User.attendance_change_superior(superior_id: current_user.id)
     @users = User.applied_superior(superior_id: current_user.id)
     @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
     @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
@@ -66,7 +64,20 @@ class AttendancesController < ApplicationController
       end
     end
     @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
-    @attendance = User.all.includes(:attendances)
+  end
+
+  # 勤怠変更申請の変更送信ボタンのアクション
+  def update_applicability
+    #「変更を送信する」ボタン：選択肢の確認(承認または否認、かつチェックON ➡︎ true)
+    update_applicability_params.each do |id, item|
+      if attendance_change_invalid?(item[:attendance_approval], item[:attendance_check]) # 処理がtrueになったら更新
+        # eachで回ってきた該当するidのAttendanceオブジェクトをattendanceに代入
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)
+      end
+    end
+    flash[:success] = "勤怠変更申請しました。"
+    redirect_to user_path(@user)
   end
 
   # 申請ボタンから送信された情報（上長のidと申請月）を受け取って更新
@@ -99,7 +110,6 @@ class AttendancesController < ApplicationController
 
   # 申請の承認可否の更新
   def update_approval
-    @user = User.find(params[:id])
     # update_approval_paramsをeachで回す
     update_approval_params.each do |id, item|
       # もしapply_and_checkbox_invalid? ➡︎ 引数が(item[:month_approval], item[:month_check])の場合
@@ -130,7 +140,12 @@ class AttendancesController < ApplicationController
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
       # {"1" => {"started_at"=>"10:00", "finished_at"=>"18:00", "note"=>"シフトA"}
-      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id])[:attendances]
+      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id, :attendance_approval, :attendance_check])[:attendances]
+    end
+
+    # 勤怠変更申請モーダル内カラム
+    def update_applicability_params
+      params.permit(attendances: [:attendance_approval, :attendance_check])[:attendances]
     end
 
     # 申請した上長idと申請月

@@ -15,6 +15,11 @@ module AttendancesHelper
   def working_times(started_at, finished_at)
     format("%.2f", (((finished_at - started_at) /60) / 60.0))
   end
+
+  # 翌日チェックのある在社時間を計算
+  def tomorrow_check_working_times(change_started, change_finished)
+    format("%.2f", (((change_finished - change_started) /60) / 60.0) + 24)
+  end
   
   # 勤務時間の合計
   def working_times_sum(seconds)
@@ -46,6 +51,9 @@ module AttendancesHelper
       # ①出勤時間と退勤h時間が空白の場合、nextで次の繰り返し処理が続行
       if item[:change_started].blank? && item[:change_finished].blank?
         next
+      elsif item[:tomorrow_check] == "1"
+        # raise
+        next
       # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
       elsif item[:change_started].blank? || item[:change_finished].blank?
         attendances = false
@@ -67,6 +75,17 @@ module AttendancesHelper
     if (ma == "承認" || ma == "否認") and mc == "1" #and優先順位低い
       apply = true
     else # それ以外の処理は全てNG
+      apply = false
+    end
+    apply
+  end
+
+  # 勤怠変更申請ボタン：選択肢の確認
+  def attendance_change_invalid?(ap, check)
+    # 指示者確認印が承認または否認 かつ 変更がONの時はtrue
+    if (ap == "承認" || ap == "否認") and check == "1"
+      apply = true
+    else
       apply = false
     end
     apply
