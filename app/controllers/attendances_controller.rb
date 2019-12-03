@@ -140,7 +140,8 @@ class AttendancesController < ApplicationController
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
       # {"1" => {"started_at"=>"10:00", "finished_at"=>"18:00", "note"=>"シフトA"}
-      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id, :attendance_approval, :attendance_check])[:attendances]
+      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id,
+                                  :attendance_approval, :attendance_check, :apply_month])[:attendances]
     end
 
     # 勤怠変更申請モーダル内カラム

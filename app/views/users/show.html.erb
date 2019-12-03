@@ -157,9 +157,6 @@
           <% end %>
         </td>
         <td>
-
-
-
           <!--在社時間-->
           <% if day.started_at.present? && day.finished_at.present? %>
             <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
