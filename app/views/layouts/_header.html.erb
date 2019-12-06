@@ -1,6 +1,11 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
     <%= link_to "勤怠システム", root_path, id: "logo" %>
+      <div class="header_name_color">
+        <% if logged_in? && current_user?(@user) %>
+          <font color="#ff1493"><%= @user.name %></font>
+        <% end %>
+      </div>
       <ul class="nav navbar-nav navbar-right">
         <li><%= link_to "トップへ", root_path %></li>
         <!--条件式・・・ログイン ＆ 管理者 ＆ 現在のユーザー-->

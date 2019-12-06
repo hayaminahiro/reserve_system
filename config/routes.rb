@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   get 'users/:id/attendances/:id/attendance_approval', to: 'attendances#attendance_approval', as: :attendance_approval
   # 勤怠変更申請/モーダル内/変更送信ボタン
   patch 'users/:id/attendances/:id/update_applicability', to: 'attendances#update_applicability', as: :update_applicability
+  # 勤怠修理ログページ
+  get 'users/:id/attendances/:id/attendance_log', to: 'attendances#attendance_log', as: :attendance_log
+  patch 'users/:id/attendances/:id/update_log', to: 'attendances#update_log', as: :update_log
   
   resources :users do
     get 'currently_working', on: :collection

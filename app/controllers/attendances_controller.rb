@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval, :update_approval, :update_applicability]
+  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval, :update_approval, :update_applicability, :attendance_log]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -31,7 +31,7 @@ class AttendancesController < ApplicationController
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
     # 自分以外の上長
-    @users = User.applied_superior(superior_id: current_user.id)
+    @users = User.where(admin: false).applied_superior(superior_id: current_user.id)
   end
 
   # 勤怠情報update
@@ -122,6 +122,29 @@ class AttendancesController < ApplicationController
     end
     flash[:success] = "1ヶ月分の勤怠申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
     redirect_to user_path(@user)
+  end
+
+  def attendance_log
+    @first_day = first_day(params[:date])
+    @last_day = @first_day.end_of_month
+    @dates = user_attendances_month_date
+    # 自分以外の上長
+    # @users = User.applied_superior(superior_id: current_user.id)
+    @users = User.all
+    # 申請上長の名前
+    @superior_a = User.find_by(id: 2).name #上長A
+    @superior_b = User.find_by(id: 3).name #上長A
+    @superior_c = User.find_by(id: 4).name #上長A
+  end
+
+  def update_log
+    update_log_params.each do |id, item| # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
+      # 更新するべきAttendanceモデルオブジェクトを探してattendanceに代入
+      attendance = Attendance.find(id)
+      attendance.update_attributes(item)
+    end
+    flash[:success] = "テスト"
+    redirect_to @user
   end
 
   def month_attendances_confirmation
