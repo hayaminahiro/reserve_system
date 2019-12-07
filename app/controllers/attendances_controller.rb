@@ -76,7 +76,7 @@ class AttendancesController < ApplicationController
         attendance.update_attributes(item)
       end
     end
-    flash[:success] = "勤怠変更申請しました。"
+    flash[:success] = "勤怠変更申請返答しました。"
     redirect_to user_path(@user)
   end
 
@@ -137,16 +137,6 @@ class AttendancesController < ApplicationController
     @superior_c = User.find_by(id: 4).name #上長A
   end
 
-  def update_log
-    update_log_params.each do |id, item| # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
-      # 更新するべきAttendanceモデルオブジェクトを探してattendanceに代入
-      attendance = Attendance.find(id)
-      attendance.update_attributes(item)
-    end
-    flash[:success] = "テスト"
-    redirect_to @user
-  end
-
   def month_attendances_confirmation
     # 月の情報
     # @user = User.find(params[:id])
@@ -181,6 +171,11 @@ class AttendancesController < ApplicationController
     def update_approval_params
       params.permit(attendances: [:month_approval, :month_check])[:attendances]
     end
+
+    def update_log_params
+      params.permit(attendances: [:started_at, :finished_at, :change_started, :finished_at])[:attendances]
+    end
+
 
     # beforeアクション
 
