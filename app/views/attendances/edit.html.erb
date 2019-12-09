@@ -65,7 +65,7 @@
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+              <td><%= af.collection_select :superior_id_at, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
               <!--裏側でattendance_approval == "申請中"を渡したい-->
               <%= af.hidden_field :attendance_approval, value: "申請中" %>
               <!--裏側でattendance_check == falseにしたい-->

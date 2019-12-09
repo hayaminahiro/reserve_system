@@ -1,6 +1,4 @@
-<div id="log-head">
-  <h1>勤怠ログ</h1>
-</div>
+<div id="log-head"><h1>勤怠ログ</h1></div>
 <% provide(:title, "勤怠ログ") %>
 
 <table class="table table-striped table-bordered table-condensed table-hover user-table">
@@ -29,11 +27,11 @@
             <td><%= l(at.change_finished.floor_to(15.minutes), format: :time) %></td>
             <td>
               <% superior_name = "" %>
-              <% if at.superior_id == 2 %>
+              <% if at.superior_id_at == 2 %>
                 <% superior_name = @superior_a %>
-              <% elsif at.superior_id == 3 %>
+              <% elsif at.superior_id_at == 3 %>
                 <% superior_name = @superior_b %>
-              <% elsif at.superior_id == 4 %>
+              <% elsif at.superior_id_at == 4 %>
                 <% superior_name = @superior_c %>
               <% end %>
               <%= superior_name %>

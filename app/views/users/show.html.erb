@@ -110,6 +110,8 @@
             <%= l(day.started_at, format: :hour)  %>
           <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
             <%= l(day.started_at, format: :hour) %>
+          <% elsif day.started_at.present? && day.attendance_approval == "申請中"%>
+            <%= l(day.started_at, format: :hour) %>
           <% end %>
         </td>
         <td>
@@ -118,6 +120,8 @@
           <% elsif day.started_at.present? && day.change_started.blank? %>
             <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
           <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
+            <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
+          <% elsif day.started_at.present? && day.attendance_approval == "申請中"%>
             <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
           <% end %>
         </td>
@@ -137,6 +141,8 @@
             <%= l(day.finished_at, format: :hour)  %>
           <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
             <%= l(day.finished_at, format: :hour)  %>
+          <% elsif day.finished_at.present? && day.attendance_approval == "申請中"%>
+            <%= l(day.finished_at, format: :hour) %>
           <% end %>
         </td>
         <td>
@@ -145,6 +151,8 @@
           <% elsif day.finished_at.present? && day.change_finished.blank? %>
             <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
           <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
+            <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
+          <% elsif day.finished_at.present? && day.attendance_approval == "申請中"%>
             <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
           <% end %>
         </td>

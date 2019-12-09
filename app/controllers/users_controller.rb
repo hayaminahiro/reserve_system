@@ -56,8 +56,8 @@ class UsersController < ApplicationController
     # 1ヶ月申請数
     @month_count = Attendance.where(superior_id: current_user).where(month_check: false).where.not(apply_month: nil).count
     # 勤怠変更申請
-    @attendance_change_count = Attendance.where(superior_id: current_user).where(attendance_check: false).count
-    # applied_superior ➡︎ 自分以外の上長id
+    @attendance_change_count = Attendance.where(superior_id_at: current_user).where(attendance_check: false).count
+    # applied_superior(1ヶ月申請) ➡︎ 自分以外の上長id
     @users = User.applied_superior(superior_id: current_user.id)
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A

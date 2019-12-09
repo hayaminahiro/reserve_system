@@ -5,7 +5,7 @@
         <div class="modal-content">
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id %>
+            <% if at.superior_id_at == current_user.id %>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-header">
                   <h4 class="modal-title">【<%= user.name %>からの勤怠変更申請】</h4>
@@ -19,7 +19,7 @@
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %>
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id%>
+            <% if at.superior_id_at == current_user.id%>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-body"> <!--モーダルボディ-->
                   <table class="table table-bordered">
@@ -103,7 +103,7 @@
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルフッター-->
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id %>
+            <% if at.superior_id_at == current_user.id %>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-footer">
                   <div id="change-btn">

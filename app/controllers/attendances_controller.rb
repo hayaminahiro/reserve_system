@@ -31,14 +31,14 @@ class AttendancesController < ApplicationController
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
     # 自分以外の上長
-    @users = User.where(admin: false).applied_superior(superior_id: current_user.id)
+    @users = User.where(admin: false).applied_superior_at(superior_id_at: current_user.id)
   end
 
   # 勤怠情報update
   def update
     if attendances_invalid?
       attendances_params.each do |id, item|
-        if attendance_superior_present?(item[:superior_id], item[:change_started], item[:change_finished] )
+        if attendance_superior_present?(item[:superior_id_at], item[:change_started], item[:change_finished] )
           attendance = Attendance.find(id)
           attendance.update_attributes(item)
         end
@@ -53,8 +53,7 @@ class AttendancesController < ApplicationController
 
   # 勤怠変更申請表示モーダル
   def attendance_approval
-    # @users = User.attendance_change_superior(superior_id: current_user.id)
-    @users = User.applied_superior(superior_id: current_user.id)
+    @users = User.applied_superior_at(superior_id_at: current_user.id)
     @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
     @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
     (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
@@ -128,8 +127,6 @@ class AttendancesController < ApplicationController
     @first_day = first_day(params[:date])
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
-    # 自分以外の上長
-    # @users = User.applied_superior(superior_id: current_user.id)
     @users = User.all
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A
@@ -150,10 +147,11 @@ class AttendancesController < ApplicationController
   end
   
   private
+    # 勤怠変更申請
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
       # {"1" => {"started_at"=>"10:00", "finished_at"=>"18:00", "note"=>"シフトA"}
-      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id,
+      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id_at,
                                   :attendance_approval, :attendance_check, :apply_month])[:attendances]
     end
 
