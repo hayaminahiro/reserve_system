@@ -71,7 +71,7 @@
               <!--裏側でattendance_check == falseにしたい-->
               <%= af.hidden_field :attendance_check, :value => false %>
               <!--申請月の@first_dayを自動で渡す-->
-              <%= af.hidden_field :apply_month, :value => @first_day %>
+              <%= af.hidden_field :apply_month_at, :value => @first_day %>
             </tr>
           <% end %>
         <% end %>
