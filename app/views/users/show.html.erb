@@ -81,7 +81,7 @@
         <td>
           <% if @user.id == current_user.id %>
             <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
-            <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+            <%= link_to "残業申請", overtime_application_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
           <% end %>
         </td>
         <td>
@@ -216,9 +216,5 @@
     </tr>
   </tfoot>
 </table>
-<!--残業申請モーダルウインドウ表示-->
-<div id="edit_overwork_request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<div id="edit_overwork_receive" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<!--iヶ月勤怠申請モーダルウィンドウ表示-->
-<div id="month_attendances_confirmation" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
+<!--残業申請ボタンのモーダルウインドウ表示-->
+<div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

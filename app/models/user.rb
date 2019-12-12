@@ -91,4 +91,9 @@ class User < ApplicationRecord
     joins(:attendances).where.not(attendances: {user_id: superior_id_at}).distinct
   end
 
+  # 自分以外の上長id(残業申請)
+  def self.applied_superior_over(superior_id_over: user)
+    joins(:attendances).where.not(attendances: {user_id: superior_id_over}).distinct
+  end
+
 end

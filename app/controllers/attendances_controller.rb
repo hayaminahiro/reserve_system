@@ -1,5 +1,6 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval, :update_approval, :update_applicability, :attendance_log]
+  before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval,
+                                  :overtime_application, :update_approval, :update_applicability, :attendance_log]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -123,10 +124,8 @@ class AttendancesController < ApplicationController
     redirect_to user_path(@user)
   end
 
+  # 勤怠変更申請ログ
   def attendance_log
-    @first_day = first_day(params[:date])
-    @last_day = @first_day.end_of_month
-    @dates = user_attendances_month_date
     @users = User.all
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A
@@ -134,16 +133,19 @@ class AttendancesController < ApplicationController
     @superior_c = User.find_by(id: 4).name #上長A
   end
 
-  def month_attendances_confirmation
-    # 月の情報
-    # @user = User.find(params[:id])
-    # @attendances = Attendance.all
-    # # (params[:day])で受け取ったデータを日付に変換し@dayに格納
-    # @day = Date.parse(params[:day])
-    # @attendance = @user.attendances.find_by(worked_on: @day)
-  end
+  # 残業申請ボタン押下時モーダル表示
+  def overtime_application
+    @users = User.where(admin: false).applied_superior_over(superior_id_over: current_user.id)
+    @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
+    # showページから送られてくるdayキーに格納されている情報をparamsで受信
+    @day = Date.parse(params[:day])
 
-  def month_attendances_request_path
+
+
+
+
+    # updateする際に使用。update_overtime_pathのattendances/:idに渡してあげる
+    @attendance = @user.attendances.find_by(worked_on: @day)
   end
   
   private

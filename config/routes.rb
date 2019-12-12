@@ -14,12 +14,6 @@ Rails.application.routes.draw do
   # 勤怠情報の編集
   get '/users/:id/attendances/:date/edit', to: 'attendances#edit', as: :edit_attendances
   patch '/users/:id/attendances/:date/update', to: 'attendances#update', as: :update_attendances
-  # 残業申請
-  get 'users/:id/attendances/:id/edit_overwork_request', to: 'users#edit_overwork_request', as: :edit_overwork_request
-  patch 'users/:id/attendances/:id/update_overwork_request', to: 'users#update_overwork_request', as: :update_overwork_request
-  # 残業申請受理
-  get 'users/:id/attendances/:id/edit_overwork_receive', to: 'users#edit_overwork_receive', as: :edit_overwork_receive
-  patch 'users/:id/attendances/:id/update_overwork_receive', to: 'users#update_overwork_receive', as: :update_overwork_receive
   # 1ヶ月分勤怠申請/showページ右下申請ボタン
   patch 'users/:id/attendances/:id/update_month', to: 'attendances#update_month', as: :update_month
   # 1ヶ月分勤怠申請/モーダル表示
@@ -34,6 +28,14 @@ Rails.application.routes.draw do
   patch 'users/:id/attendances/:id/update_applicability', to: 'attendances#update_applicability', as: :update_applicability
   # 勤怠修理ログページ
   get 'users/:id/attendances/:date/attendance_log', to: 'attendances#attendance_log', as: :attendance_log
+  # 残業申請ボタン押下時のモーダル表示
+  get 'users/:id/attendances/:id/overtime_application', to: 'attendances#overtime_application', as: :overtime_application
+  # モーダル内から残業申請
+  patch 'users/:id/attendances/:id/update_overtime', to: 'attendances#update_overtime', as: :update_overtime
+  # 残業申請お知らせリンクからモーダル表示
+  get 'users/:id/attendances/:id/overtime_approval', to: 'attendances#overtime_approval', as: :overtime_approval
+  # モーダル内の上長から残業申請の承認・否認
+  patch 'users/:id/attendances/:id/update_overtime_approval', to: 'attendances#update_overtime_approval', as: :update_overtime_approval
   
   resources :users do
     get 'currently_working', on: :collection

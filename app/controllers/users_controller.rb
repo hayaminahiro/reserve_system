@@ -58,7 +58,8 @@ class UsersController < ApplicationController
     # 勤怠変更申請
     @attendance_change_count = Attendance.where(superior_id_at: current_user).where(attendance_check: false).count
     # applied_superior(1ヶ月申請) ➡︎ 自分以外の上長id
-    @users = User.applied_superior(superior_id: current_user.id)
+    @users = User.where(admin: false).applied_superior(superior_id: current_user.id)
+
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A
     @superior_b = User.find_by(id: 3).name #上長A
@@ -116,14 +117,14 @@ class UsersController < ApplicationController
   end
   
   # 残業申請
-  def edit_overwork_request
-    @user = User.find(params[:id])
-    @attendances = Attendance.all
-    # (params[:day])で受け取ったデータを日付に変換し@dayに格納
-    @day = Date.parse(params[:day])
-    @attendance = @user.attendances.find_by(worked_on: @day)
-    @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
-  end
+  # def edit_overwork_request
+  #   @user = User.find(params[:id])
+  #   @attendances = Attendance.all
+  #   # (params[:day])で受け取ったデータを日付に変換し@dayに格納
+  #   @day = Date.parse(params[:day])
+  #   @attendance = @user.attendances.find_by(worked_on: @day)
+  #   @youbi = %w(日 月 火 水 木 金 土)[@day.wday]
+  # end
 
   # 残業申請受理
   def edit_overwork_receive

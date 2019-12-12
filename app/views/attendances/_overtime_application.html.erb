@@ -1,0 +1,60 @@
+<div class="modal-dialog modal-dialog-center">
+  <%= form_with(model: @user, url: update_overtime_path(@user, @attendance), local: true, method: :patch) do |f| %>
+    <% @users.each do |user| %>
+      <% attendances = Attendance.where(user_id: user.id) %>
+      <% attendances.each do |at| %>
+        <div class="modal-position">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">【残業申請】</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body"> <!--モーダルボディ-->
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="title-position">日付</th>
+                    <th class="title-position">曜日</th>
+                    <th class="title-position">終了予定時間</th>
+                    <th class="title-position">翌日</th>
+                    <th class="title-position">業務処理内容</th>
+                    <th class="title-position">指示者確認㊞</th>
+                  </tr>
+                </thead>
+                <%= f.fields_for "attendances[]", at do |af| %>
+                  <tbody>
+                    <tr>
+                      <td><%= l(@day, format: :short1) %></td> <!--日付-->
+                      <td> <!--曜日-->
+                        <% if @day.wday == 0 %>
+                          <font color="red"><%= $days_of_the_week[@day.wday] %></font>
+                        <% elsif @day.wday == 6 %>
+                          <font color="blue"><%= $days_of_the_week[@day.wday] %></font>
+                        <% else %>
+                          <%= $days_of_the_week[@day.wday] %>
+                        <% end %>
+                      </td>
+                      <td><%= af.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
+                      <td width="45px"><%= af.check_box(:tomorrow_check_at, incude_hidden: false) %></td> <!--翌日チェック-->
+                      <td><%= af.text_field :job_content, class: 'form-control' %></td>
+                      <td><%= af.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                    </tr>
+                  </tbody>
+                <% end %>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <div id="change-btn">
+                <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% break %>
+      <% end %>
+      <% break %>
+    <% end %>
+  <% end %>
+</div>
