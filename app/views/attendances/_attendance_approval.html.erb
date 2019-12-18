@@ -51,7 +51,7 @@
                         <th class="title-position">分</th>
                       </tr>
                     </thead>
-                    <%= fields_for "attendances[]", at do |af| %>
+                    <%= f.fields_for "attendances[]", at do |af| %>
                       <tbody>
                       <tr>
                         <td><%= l(at.worked_on, format: :short1) %></td>

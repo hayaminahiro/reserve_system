@@ -8,7 +8,6 @@
     </div>
     <div class="modal-body">
       <%= form_with(model: @attendance, local: true, method: :patch) do |f| %>
-      <!--form_with(model: @attendance, url: update_overwork_request_path(@user), local: true, method: :patch) do |f|-->
         <table class="table table-bordered">
           <thead class="mokuji">
             <tr>
@@ -40,7 +39,6 @@
         </table>
       <% end %>
     </div>
-    
     <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
 			<button type="button" class="btn btn-primary">変更を送信する</button>

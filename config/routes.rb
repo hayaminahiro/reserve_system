@@ -35,8 +35,8 @@ Rails.application.routes.draw do
   # 残業申請お知らせリンクからモーダル表示
   get 'users/:id/attendances/:id/overtime_approval', to: 'attendances#overtime_approval', as: :overtime_approval
   # モーダル内の上長から残業申請の承認・否認
-  patch 'users/:id/attendances/:id/update_overtime_approval', to: 'attendances#update_overtime_approval', as: :update_overtime_approval
-  
+  patch 'users/:user_id/attendances/:id/update_overtime_approval', to: 'attendances#update_overtime_approval', as: :update_overtime_approval
+
   resources :users do
     get 'currently_working', on: :collection
     member do # memberルーティングは生成するurlに:idが自動付与→/users/:id/edit_personal_info

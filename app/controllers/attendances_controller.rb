@@ -129,23 +129,29 @@ class AttendancesController < ApplicationController
     @users = User.all
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A
-    @superior_b = User.find_by(id: 3).name #上長A
-    @superior_c = User.find_by(id: 4).name #上長A
+    @superior_b = User.find_by(id: 3).name #上長B
+    @superior_c = User.find_by(id: 4).name #上長C
   end
 
   # 残業申請ボタン押下時モーダル表示
   def overtime_application
+
     @users = User.where(admin: false).applied_superior_over(superior_id_over: current_user.id)
+    @attendance = Attendance.find(params[:id])
     @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
     # showページから送られてくるdayキーに格納されている情報をparamsで受信
     @day = Date.parse(params[:day])
+  end
 
-
-
-
-
-    # updateする際に使用。update_overtime_pathのattendances/:idに渡してあげる
-    @attendance = @user.attendances.find_by(worked_on: @day)
+  # 残業申請モーダルからUPDATE
+  def update_overtime
+    @user = User.find(params[:id])
+    update_overtime_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(item)
+    end
+    flash[:success] = "残業申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
+    redirect_to user_path(@user)
   end
   
   private
@@ -153,7 +159,7 @@ class AttendancesController < ApplicationController
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
       # {"1" => {"started_at"=>"10:00", "finished_at"=>"18:00", "note"=>"シフトA"}
-      params.permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id_at,
+      params.require(:user).permit(attendances: [:change_started, :change_finished, :note, :tomorrow_check, :superior_id_at,
                                   :attendance_approval, :attendance_check, :apply_month_at])[:attendances]
     end
 
@@ -172,10 +178,15 @@ class AttendancesController < ApplicationController
       params.permit(attendances: [:month_approval, :month_check])[:attendances]
     end
 
+    # 勤怠ログ
     def update_log_params
       params.permit(attendances: [:started_at, :finished_at, :change_started, :finished_at])[:attendances]
     end
 
+    # 残業申請カラム
+    def update_overtime_params
+      params.permit(attendances: [:job_end_time, :tomorrow_check_over, :job_content, :superior_id_over, :apply_month_over])[:attendances]
+    end
 
     # beforeアクション
 

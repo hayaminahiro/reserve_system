@@ -34,7 +34,7 @@
                           <th class="title-position">勤怠を確認する</th>
                         </tr>
                       </thead>
-                      <%= fields_for "attendances[]", at do |af| %>
+                      <%= f.fields_for "attendances[]", at do |af| %>
                         <tbody>
                           <tr>
                             <td><%= l(at.apply_month, format: :month) %></td>

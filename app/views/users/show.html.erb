@@ -74,25 +74,77 @@
     </tr>
   </thead>
   <tbody>
-    <!--@attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)-->
-    <!--@attendancesは、@userに紐づくattendance情報で、１日から末日の範囲を代入-->
     <% @dates.each do |day| %>
       <tr>
         <td>
           <% if @user.id == current_user.id %>
-            <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
-            <%= link_to "残業申請", overtime_application_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>">
+              残業申請
+            </button>
+            <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
+              <!--切り替えボタンの設定 -->
+              <div class="modal fade" id="myModal<%= day.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">【残業申請】</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                          <th class="title-position">日付</th>
+                          <th class="title-position">曜日</th>
+                          <th class="title-position">終了予定時間</th>
+                          <th class="title-position">翌日</th>
+                          <th class="title-position">業務処理内容</th>
+                          <th class="title-position">指示者確認㊞</th>
+                        </tr>
+                        </thead>
+                        <%= f.fields_for "attendances[]", day do |at| %>
+                          <tbody>
+                          <tr>
+                            <td>
+                              <%= l(day.worked_on, format: :short1) %>
+                            </td>
+                            <td>
+                              <% if day.worked_on.wday == 0 %>
+                                <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                              <% elsif day.worked_on.wday == 6 %>
+                                <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                              <% else %>
+                                <%= $days_of_the_week[day.worked_on.wday] %>
+                              <% end %>
+                            </td>
+                            <td><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
+                            <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
+                            <td><%= at.text_field :job_content, class: 'form-control' %></td>
+                            <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                            <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                          </tr>
+                          </tbody>
+                        <% end %>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                      <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           <% end %>
+          <!--残業申請ボタンのモーダルウインドウ表示-->
+          <div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
         </td>
-        <td>
-          <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
+        <td> <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
           <%= l(day.worked_on, format: :short1) %>
         </td>
         <td>
-          <!--[日〜土（配列番号0~6）][0~6]で配列から曜日を選択/wdayは番号で曜日を表す（日曜から0番）-->
-          <!--dayは1日から始まる変数で、each文で@dates(1ヶ月分繰り返される)-->
-          <!--worked_onは日付のカラムを表し、wdayは曜日に変換するメソッド-->
-          <!--例：day.worked_onは=> Tue, 01 Oct 2019　/ これに.wdayすると =>2 つまり火曜日となる-->
           <% $days_of_the_week[day.worked_on.wday] %>
           <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
           <% if day.worked_on.wday == 0 %>
@@ -164,8 +216,7 @@
             <% end %>
           <% end %>
         </td>
-        <td>
-          <!--在社時間-->
+        <td> <!--在社時間-->
           <% if day.started_at.present? && day.finished_at.present? %>
             <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
             <!--非表示だが下記で在社時刻を計算-->
@@ -173,8 +224,7 @@
             <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
             <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
             <% @total_seconds = @total_seconds.to_i + seconds %>
-          <% end %>
-          </br>
+          <% end %> </br>
           <!--変更後の在社時間-->
           <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %>
             <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
@@ -216,5 +266,3 @@
     </tr>
   </tfoot>
 </table>
-<!--残業申請ボタンのモーダルウインドウ表示-->
-<div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

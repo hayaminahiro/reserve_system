@@ -18,7 +18,7 @@
       <tbody>
         <!--@dates = user_attendances_month_date ユーザーに基づく1ヶ月間の値-->
         <% @dates.each do |day| %>
-          <%= fields_for "attendances[]", day do |af| %>  
+          <%= f.fields_for "attendances[]", day do |af| %>
             <tr>
               <td><%= l(day.worked_on, format: :short1) %></td>
               <td>
