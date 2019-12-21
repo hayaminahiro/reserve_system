@@ -106,6 +106,9 @@
             <% if at.superior_id_at == current_user.id %>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-footer">
+                  <div id="notice-message">
+                    <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
+                  </div>
                   <div id="change-btn">
                     <%= f.submit "変更を送信する", class: "btn btn-primary" %>
                   </div>

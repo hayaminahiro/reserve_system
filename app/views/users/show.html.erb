@@ -13,8 +13,10 @@
           </div>
         </td>
       <% end %>
-      <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
-          指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
+      <td>
+        指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %> </br>
+        指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %>
+      </td>
       <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
       <td>初日　<%= l(@first_day, format: :short1) %></td>
     </tr>
@@ -85,53 +87,59 @@
               <!--切り替えボタンの設定 -->
               <div class="modal fade" id="myModal<%= day.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">【残業申請】</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                          <th class="title-position">日付</th>
-                          <th class="title-position">曜日</th>
-                          <th class="title-position">終了予定時間</th>
-                          <th class="title-position">翌日</th>
-                          <th class="title-position">業務処理内容</th>
-                          <th class="title-position">指示者確認㊞</th>
-                        </tr>
-                        </thead>
-                        <%= f.fields_for "attendances[]", day do |at| %>
-                          <tbody>
+                  <div id="over-modal-position">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">【残業申請】</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table table-bordered">
+                          <thead>
                           <tr>
-                            <td>
-                              <%= l(day.worked_on, format: :short1) %>
-                            </td>
-                            <td>
-                              <% if day.worked_on.wday == 0 %>
-                                <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
-                              <% elsif day.worked_on.wday == 6 %>
-                                <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
-                              <% else %>
-                                <%= $days_of_the_week[day.worked_on.wday] %>
-                              <% end %>
-                            </td>
-                            <td><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
-                            <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
-                            <td><%= at.text_field :job_content, class: 'form-control' %></td>
-                            <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
-                            <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                            <th class="title-position">日付</th>
+                            <th class="title-position">曜日</th>
+                            <th class="title-position">終了予定時間</th>
+                            <th class="title-position">翌日</th>
+                            <th class="title-position">業務処理内容</th>
+                            <th class="title-position">指示者確認㊞</th>
                           </tr>
-                          </tbody>
-                        <% end %>
-                      </table>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-                      <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                          </thead>
+                          <%= f.fields_for "attendances[]", day do |at| %>
+                            <tbody>
+                            <tr>
+                              <td>
+                                <%= l(day.worked_on, format: :short1) %>
+                              </td>
+                              <td>
+                                <% if day.worked_on.wday == 0 %>
+                                  <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                                <% elsif day.worked_on.wday == 6 %>
+                                  <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                                <% else %>
+                                  <%= $days_of_the_week[day.worked_on.wday] %>
+                                <% end %>
+                              </td>
+                              <td><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
+                              <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
+                              <td><%= at.text_field :job_content, class: 'form-control' %></td>
+                              <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                              <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                            </tr>
+                            </tbody>
+                          <% end %>
+                        </table>
+                      </div>
+                      <div id="notice-message">
+                        <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①勤務時間内の申請はできません。②指示者確認㊞が未選択状態だと申請できません。</p>
+                      </div>
+                      <div class="modal-footer">
+                        <div class="over-modal-footer">
+                          <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -188,11 +196,11 @@
         </td>
         <td>
           <% if day.change_finished.present? && day.attendance_approval == "承認" %>
-            <%= l(day.change_finished, format: :hour)  %>
+            <%= l(day.change_finished, format: :hour) %>
           <% elsif day.finished_at.present? && day.change_finished.blank? %>
-            <%= l(day.finished_at, format: :hour)  %>
+            <%= l(day.finished_at, format: :hour) %>
           <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
-            <%= l(day.finished_at, format: :hour)  %>
+            <%= l(day.finished_at, format: :hour) %>
           <% elsif day.finished_at.present? && day.attendance_approval == "申請中"%>
             <%= l(day.finished_at, format: :hour) %>
           <% end %>

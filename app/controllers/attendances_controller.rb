@@ -1,6 +1,6 @@
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval,
-                                  :overtime_application, :update_approval, :update_applicability, :attendance_log]
+                                  :overtime_application, :update_approval, :update_applicability, :attendance_log, :update_overtime]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -80,7 +80,7 @@ class AttendancesController < ApplicationController
     redirect_to user_path(@user)
   end
 
-  # 申請ボタンから送信された情報（上長のidと申請月）を受け取って更新
+  # 勤怠ページから1ヶ月申請
   def update_month
     if superior_present? # params[:user][:apply_month] = @first_day /申請先上長が選択されているか確認
       update_month_params.each do |id, item| # idはAttendanceモデルオブジェクトのid、itemは各カラムの値が入った更新するための情報
@@ -89,6 +89,9 @@ class AttendancesController < ApplicationController
         attendance.update_attributes(item)
       end
       flash[:success] = "所属長申請しました。"
+      redirect_to @user
+    else
+      flash[:danger] = "申請先を選択して下さい。"
       redirect_to @user
     end
   end
@@ -135,7 +138,6 @@ class AttendancesController < ApplicationController
 
   # 残業申請ボタン押下時モーダル表示
   def overtime_application
-
     @users = User.where(admin: false).applied_superior_over(superior_id_over: current_user.id)
     @attendance = Attendance.find(params[:id])
     @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
@@ -145,15 +147,27 @@ class AttendancesController < ApplicationController
 
   # 残業申請モーダルからUPDATE
   def update_overtime
-    @user = User.find(params[:id])
-    update_overtime_params.each do |id, item|
-      attendance = Attendance.find(id)
-      attendance.update_attributes(item)
+    if overtime_range_invalid? && overtime_value_present? # 申請時間と上長が選択されているかチェック
+      update_overtime_params.each do |id, item|
+        # 残業申請時間が勤務時間内かをチェックする
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)
+      end
+      flash[:success] = "残業申請しました。"
+      redirect_to user_path(@user)
+    else
+      flash[:danger] = "1. 指定勤務終了時間内の申請はできません。2. 申請先が選択されているか確認して下さい。"
+      redirect_to user_path(@user)
     end
-    flash[:success] = "残業申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
-    redirect_to user_path(@user)
   end
-  
+
+  def overtime_approval
+
+  end
+
+
+
+
   private
     # 勤怠変更申請
     def attendances_params
@@ -165,22 +179,17 @@ class AttendancesController < ApplicationController
 
     # 勤怠変更申請モーダル内カラム
     def update_applicability_params
-      params.permit(attendances: [:attendance_approval, :attendance_check])[:attendances]
+      params.require(:user).permit(attendances: [:attendance_approval, :attendance_check])[:attendances]
     end
 
     # 申請した上長idと申請月
     def update_month_params
-      params.permit(attendances: [:superior_id, :apply_month, :month_approval, :month_check])[:attendances]
+      params.require(:user).permit(attendances: [:superior_id, :apply_month, :month_approval, :month_check])[:attendances]
     end
 
     # 申請の承認可否の更新
     def update_approval_params
-      params.permit(attendances: [:month_approval, :month_check])[:attendances]
-    end
-
-    # 勤怠ログ
-    def update_log_params
-      params.permit(attendances: [:started_at, :finished_at, :change_started, :finished_at])[:attendances]
+      params.require(:user).permit(attendances: [:month_approval, :month_check])[:attendances]
     end
 
     # 残業申請カラム

@@ -114,6 +114,33 @@ module AttendancesHelper
     end
     apply
   end
+
+  # 残業申請：終了予定時間と上長が選択されているかチェック
+  def overtime_value_present?
+    overtime = true
+    update_overtime_params.each do |id, item|
+      if item[:job_end_time].blank? || item[:superior_id_over].blank?
+        overtime = false
+      else
+        overtime = true
+      end
+    end
+    overtime
+  end
+
+  # 残業申請時間が勤務時間内かをチェック
+  def overtime_range_invalid?
+    time = @user.designated_work_end_time # 指定勤務終了時間を@timeに代入
+    overtime = true
+    update_overtime_params.each do |id, item|
+      # 終了予定時間が指定勤務終了時間より早い場合 ➡︎ false
+      if time.strftime("%H:%M:%S") > item[:job_end_time]
+        overtime = false
+      end
+    end
+    overtime
+  end
+
 end
 
 
