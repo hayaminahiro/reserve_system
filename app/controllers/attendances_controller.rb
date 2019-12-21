@@ -162,6 +162,9 @@ class AttendancesController < ApplicationController
   end
 
   def overtime_approval
+    @user = User.find(params[:id])
+    @users = User.all
+
 
   end
 
