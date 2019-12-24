@@ -116,14 +116,6 @@ class UsersController < ApplicationController
     @working_users = User.all.includes(:attendances)
   end
 
-  # 残業申請受理
-  def edit_overwork_receive
-  end
-  def update_overwork_request
-  end
-  def update_overwork_receive
-  end
-
   private
   
     def overwork_params

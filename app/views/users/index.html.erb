@@ -5,24 +5,22 @@
 
 <div class="col-md-10 col-md-offset-1">
   <table class="table table-hover" id="table-users">
-    
-<!--CSVインポート-->
-<div class="row">
-  <div class="col-md-4">
-    <%= form_tag import_users_path, multipart: true do %>
-      <%= file_field_tag :file %>
-      <%= submit_tag "CSVインポート", class: "btn btn-primary" %>
-    <% end %>
-  </div>
-</div>
 
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></br>
-         <% if current_user.admin? %>
-           <% if !current_user?(user) %>&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= link_to "削除", user, method: :delete, class: "btn btn-primary",
-                                        data: { confirm: "削除しますか?" } %></br>
+  <!--CSVインポート-->
+  <div class="row">
+    <div class="col-md-4">
+      <%= form_tag import_users_path, multipart: true do %>
+        <%= file_field_tag :file, { class: "form-control" } %>
+        <%= submit_tag "CSVインポート", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.name %> <br>
+       <% if current_user.admin? %>
+         <% if !current_user?(user) %>&nbsp;&nbsp;&nbsp;&nbsp;
+            <%= link_to "削除", user, method: :delete, class: "btn btn-primary", data: { confirm: "削除しますか?" } %><br>
          <% end %>
           <div class="panel-group">
             <div class="panel panel-default">
@@ -39,9 +37,9 @@
             </div>
           </div>
         <% end %>
-        </td>
-      </tr>
-    <% end %>          
+      </td>
+    </tr>
+  <% end %>
   </table>
 </div>
 
