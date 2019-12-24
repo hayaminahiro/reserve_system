@@ -168,7 +168,6 @@ class AttendancesController < ApplicationController
     redirect_to user_path(@user)
   end
 
-
   private
     # 勤怠変更申請
     def attendances_params
