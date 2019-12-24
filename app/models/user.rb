@@ -77,13 +77,23 @@ class User < ApplicationRecord
 
   # 更新を許可するカラムを定義
   def self.updatable_attributes
-    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", 
+    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time",
     "designated_work_start_time", "designated_work_end_time", "admin", "password"]
   end
 
-  # 自分以外の上長id
+  # 自分以外の上長id(1ヶ月申請)
   def self.applied_superior(superior_id: user)
     joins(:attendances).where.not(attendances: {user_id: superior_id}).distinct
+  end
+
+  # 自分以外の上長id(勤怠変更申請)
+  def self.applied_superior_at(superior_id_at: user)
+    joins(:attendances).where.not(attendances: {user_id: superior_id_at}).distinct
+  end
+
+  # 自分以外の上長id(残業申請)
+  def self.applied_superior_over(superior_id_over: user)
+    joins(:attendances).where.not(attendances: {user_id: superior_id_over}).distinct
   end
 
 end

@@ -1,0 +1,35 @@
+<div class="container" style="margin-top: 20px;">
+  <table class="table table-bordered table-condensed user-table">
+    <tr>
+      <% if current_user.id? %>
+        <td>
+          <div class="btn-users-show">
+            <% if @user.id == current_user.id %>
+              <%= link_to "◀︎", user_path(params: {id: @user.id, first_day: @first_day.prev_month }), class: "btn btn-primary btn-xs" %>
+              <%= l(@first_day, format: :long) %> 時間管理表
+              <%= link_to "▶︎", user_path(params: {id: @user.id, first_day: @first_day.next_month }), class: "btn btn-primary btn-xs" %>
+            <% end %>
+          </div>
+        </td>
+      <% end %>
+      <td>
+        指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %> </br>
+        指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %>
+      </td>
+      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
+      <td>初日　<%= l(@first_day, format: :short1) %></td>
+    </tr>
+    <tr>
+      <!--@user.affiliation(所属カラム)がtrueで存在する場合はそれを表示、falseの場合は未設定を表示-->
+      <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未設定" %></td>
+      <td>氏名：<%= @user.name %></td>
+      <td>コード</td>
+      <td>5555</td>
+      <!--@dates = user_attendances_month_date-->
+      <!--@worked_sum = @dates.where.not(started_at: nil).count-->
+      <!--@worked_sumは出勤日がnilでない = 出勤した日数を表す・・・Userコントローラー参照-->
+      <td>出勤日数：<%= @worked_sum %>日</td>
+      <td>締日　<%= l(@last_day, format: :short1) %></td>
+    </tr>
+  </table>
+</div>

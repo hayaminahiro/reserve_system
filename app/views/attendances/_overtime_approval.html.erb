@@ -1,0 +1,105 @@
+<div class="modal-dialog modal-dialog-center">
+  <%= form_with(model: @user, url: update_overtime_approval_path(@user), local: true, method: :patch) do |f| %>
+    <% @users.each do |user| %>
+      <div class="modal-position">
+        <div class="modal-content">
+          <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
+          <% attendances.each do |at| %>
+            <% if at.superior_id_over == current_user.id %>
+              <% if at.overtime_check == false %>
+                <div class="modal-header">
+                  <h4 class="modal-title">【<%= user.name %>からの残業申請】</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <% break %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <% attendances = Attendance.where(user_id: user.id) %>
+          <% attendances.each do |at| %>
+            <% if at.superior_id_over == current_user.id %>
+              <% if at.overtime_check == false %>
+                <div class="modal-body"> <!--モーダルボディ-->
+                  <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                      <th class="title-position">日付</th>
+                      <th class="title-position">曜日</th>
+                      <th class="title-position">終了予定時間</th>
+                      <th class="title-position">指定勤務終了時間</th>
+                      <th class="title-position">時間外時間</th>
+                      <th class="title-position">業務処理内容</th>
+                      <th class="title-position">指示者確認㊞</th>
+                      <th class="title-position">変更</th>
+                      <th class="title-position">勤怠を確認する</th>
+                    </tr>
+                    </thead>
+                    <%= f.fields_for "attendances[]", at do |af| %>
+                      <tbody>
+                        <tr>
+                          <td><%= l(at.worked_on, format: :short1) %></td>
+                          <td>
+                            <% $days_of_the_week[at.worked_on.wday] %>
+                            <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+                            <% if at.worked_on.wday == 0 %>
+                              <font color="red"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                            <% elsif at.worked_on.wday == 6 %>
+                              <font color="blue"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                            <% else %>
+                              <%= $days_of_the_week[at.worked_on.wday] %>
+                            <% end %>
+                          </td>
+                          <td><%= l(at.job_end_time.floor_to(15.minutes), format: :time) %></td>
+                          <td><%= format_basic_info(@user.designated_work_end_time) %></td>
+                          <td> <!--job_end_time(終了予定時間) - designated_work_end_time（指定勤務終了時間)-->
+                            <% if at.tomorrow_check_over == true %>
+                              <%= tomorrow_check_over_times(@user.designated_work_end_time, at.job_end_time.floor_to(15.minutes)) %>
+                            <% else %>
+                              <%= overtime_result(@user.designated_work_end_time, at.job_end_time.floor_to(15.minutes)) %>
+                            <% end %>
+                          </td>
+                          <td><%= at.job_content %></td>
+                          <td>
+                            <%= af.select :overtime_approval, Attendance.overtime_approvals.keys.to_a, {}, { class: "form-control" } %>
+                          </td>
+                          <td width="45px">
+                            <%= af.check_box :overtime_check, include_hidden: false %>
+                          </td>
+                          <td>
+                            <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month_over), class: 'btn btn-primary' %>
+                          </td>
+                        </tr>
+                      </tbody>
+                    <% end %>
+                  </table>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+          <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルフッター-->
+          <% attendances.each do |at| %>
+            <% if at.superior_id_over == current_user.id %>
+              <% if at.overtime_check == false %>
+                <div class="modal-footer">
+                  <div id="notice-message">
+                    <p>
+                      <img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />
+                      ①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。
+                    </p>
+                  </div>
+                  <div id="change-btn">
+                    <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                  </div>
+                </div>
+                <% break %>
+              <% end %>
+              <%# break %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

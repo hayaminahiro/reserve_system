@@ -18,7 +18,7 @@
       <tbody>
         <!--@dates = user_attendances_month_date ユーザーに基づく1ヶ月間の値-->
         <% @dates.each do |day| %>
-          <%= fields_for "attendances[]", day do |af| %>  
+          <%= f.fields_for "attendances[]", day do |af| %>
             <tr>
               <td><%= l(day.worked_on, format: :short1) %></td>
               <td>
@@ -65,13 +65,13 @@
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+              <td><%= af.collection_select :superior_id_at, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
               <!--裏側でattendance_approval == "申請中"を渡したい-->
               <%= af.hidden_field :attendance_approval, value: "申請中" %>
               <!--裏側でattendance_check == falseにしたい-->
               <%= af.hidden_field :attendance_check, :value => false %>
               <!--申請月の@first_dayを自動で渡す-->
-              <%= af.hidden_field :apply_month, :value => @first_day %>
+              <%= af.hidden_field :apply_month_at, :value => @first_day %>
             </tr>
           <% end %>
         <% end %>

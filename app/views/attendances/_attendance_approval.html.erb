@@ -5,7 +5,7 @@
         <div class="modal-content">
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id %>
+            <% if at.superior_id_at == current_user.id %>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-header">
                   <h4 class="modal-title">【<%= user.name %>からの勤怠変更申請】</h4>
@@ -19,7 +19,7 @@
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %>
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id%>
+            <% if at.superior_id_at == current_user.id%>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-body"> <!--モーダルボディ-->
                   <table class="table table-bordered">
@@ -51,7 +51,7 @@
                         <th class="title-position">分</th>
                       </tr>
                     </thead>
-                    <%= fields_for "attendances[]", at do |af| %>
+                    <%= f.fields_for "attendances[]", at do |af| %>
                       <tbody>
                       <tr>
                         <td><%= l(at.worked_on, format: :short1) %></td>
@@ -91,7 +91,7 @@
                           <%= af.check_box :attendance_check, incude_hidden: false %>
                         </td>
                         <td>
-                          <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month ), class: 'btn btn-primary' %>
+                          <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month_at ), class: 'btn btn-primary' %>
                         </td>
                       </tr>
                       </tbody>
@@ -103,9 +103,12 @@
           <% end %>
           <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルフッター-->
           <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id %>
+            <% if at.superior_id_at == current_user.id %>
               <% if at.attendance_approval == "申請中" || at.attendance_check == false %>
                 <div class="modal-footer">
+                  <div id="notice-message">
+                    <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
+                  </div>
                   <div id="change-btn">
                     <%= f.submit "変更を送信する", class: "btn btn-primary" %>
                   </div>

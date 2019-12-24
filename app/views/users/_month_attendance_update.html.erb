@@ -3,7 +3,7 @@
     <% @dates.each do |day| %>
       <!--attendances[] ➡︎ 各フォームのinputタグのname属性にattendances[id][カラム名]という形式で展開-->
       <!--dayは繰り返し処理されている@datesからなる1つのAttendanceオブジェクト-->
-      <%= fields_for "attendances[]", day do |af| %>
+      <%= f.fields_for "attendances[]", day do |af| %>
         <div class="form-group">
           <% superior_name = "" %>
           <% if day.superior_id == 2 %>

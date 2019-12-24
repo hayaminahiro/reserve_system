@@ -25,6 +25,19 @@ module AttendancesHelper
   def working_times_sum(seconds)
     format("%.2f", seconds / 60 / 60.0)
   end
+
+  # 時間外時間を計算
+  def overtime_result(work_end_time, job_end_time)
+    format("%.2f", (((job_end_time - work_end_time) /60) / 60.0))
+  end
+
+  # 翌日チェックのある時間外時間の合計を計算
+  def tomorrow_check_over_times(work_end_time, job_end_time)
+    format("%.2f", (((job_end_time - work_end_time) /60) / 60.0) + 24)
+  end
+
+
+
   
   # @first_dayの定義
   # まず当日を取得するためDate.currentを使用
@@ -52,7 +65,6 @@ module AttendancesHelper
       if item[:change_started].blank? && item[:change_finished].blank?
         next
       elsif item[:tomorrow_check] == "1"
-        # raise
         next
       # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
       elsif item[:change_started].blank? || item[:change_finished].blank?
@@ -106,14 +118,90 @@ module AttendancesHelper
   end
 
   # 上長が選択されていればtrueを返す(上長だけ選択して申請できなくする)
-  def attendance_superior_present?(superior_id, start, finish)
-    if superior_id.present? && start.present? && finish.present?
+  def attendance_superior_present?(superior_id_at, start, finish)
+    if superior_id_at.present? && start.present? && finish.present?
       apply = true
     else
       apply = false
     end
     apply
   end
+
+  # 残業申請：終了予定時間と上長が選択されているかチェック
+  def overtime_value_present?
+    overtime = true
+    update_overtime_params.each do |id, item|
+      if item[:job_end_time].blank? || item[:superior_id_over].blank?
+        overtime = false
+      else
+        overtime = true
+      end
+    end
+    overtime
+  end
+
+  # 残業申請時間が勤務時間内かをチェック
+  def overtime_range_invalid?
+    time = @user.designated_work_end_time # 指定勤務終了時間を@timeに代入
+    overtime = true
+    update_overtime_params.each do |id, item|
+      # 終了予定時間が指定勤務終了時間より早い場合 ➡︎ false
+      if item[:tomorrow_check_over] == "1"
+        next
+      elsif time.strftime("%H:%M:%S") > item[:job_end_time]
+        overtime = false
+      end
+    end
+    overtime
+  end
+
+
+
+  #def overtime_range_invalid?
+  #  time = @user.designated_work_end_time # 指定勤務終了時間を@timeに代入
+  #  overtime = true
+  #  update_overtime_params.each do |id, item|
+  #    # 終了予定時間が指定勤務終了時間より早い場合 ➡︎ false
+  #    if time.strftime("%H:%M:%S") > item[:job_end_time]
+  #      overtime = false
+  #    end
+  #  end
+  #  overtime
+  #end
+
+  #def attendances_invalid?
+  #  attendances = true #不正な値がない状態でスタート → true
+  #  attendances_params.each do |id, item|
+  #    # ①出勤時間と退勤h時間が空白の場合、nextで次の繰り返し処理が続行
+  #    if item[:change_started].blank? && item[:change_finished].blank?
+  #      next
+  #    elsif item[:tomorrow_check] == "1"
+  #      next
+  #      # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
+  #    elsif item[:change_started].blank? || item[:change_finished].blank?
+  #      attendances = false
+  #      break
+  #      # ③出勤時間が退勤時間より大きい場合 → 処理を終了しfalseを返す
+  #    elsif item[:change_started] > item[:change_finished]
+  #      attendances = false
+  #      break
+  #    end
+  #  end
+  #  # ①問題ないのでtrueを返す、②③問題ありfalseを返す
+  #  attendances
+  #end
+
+
+  # 残業申請ボタン：選択肢の確認
+  def overtime_approval_invalid?(op, oc)
+    if (op == "承認" || op == "否認") and oc == "1"
+      overtime = true
+    else
+      overtime = false
+    end
+    overtime
+  end
+
 end
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_26_142625) do
+ActiveRecord::Schema.define(version: 2019_12_12_133244) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2019_11_26_142625) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "scheduled_end_time", default: "2019-11-30 19:00:00"
+    t.datetime "scheduled_end_time", default: "2019-12-24 19:00:00"
     t.string "status"
     t.integer "superior_id"
     t.datetime "apply_month"
@@ -31,6 +31,16 @@ ActiveRecord::Schema.define(version: 2019_11_26_142625) do
     t.boolean "attendance_check", default: false
     t.datetime "change_started"
     t.datetime "change_finished"
+    t.integer "superior_id_at"
+    t.datetime "apply_month_at"
+    t.datetime "apply_month_over"
+    t.datetime "job_end_time"
+    t.boolean "tomorrow_check_at", default: false
+    t.string "job_content"
+    t.integer "superior_id_over"
+    t.integer "overtime_approval", default: 1
+    t.boolean "overtime_check", default: false
+    t.boolean "tomorrow_check_over", default: false
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -53,8 +63,8 @@ ActiveRecord::Schema.define(version: 2019_11_26_142625) do
     t.string "department"
     t.datetime "basic_time", default: "2019-07-01 07:30:00"
     t.datetime "work_time", default: "2019-07-01 08:00:00"
-    t.datetime "designated_work_start_time", default: "2019-11-30 09:00:00"
-    t.datetime "designated_work_end_time", default: "2019-11-30 18:00:00"
+    t.datetime "designated_work_start_time", default: "2019-12-24 09:00:00"
+    t.datetime "designated_work_end_time", default: "2019-12-24 18:00:00"
     t.integer "employee_number"
     t.string "uid"
     t.string "affiliation"

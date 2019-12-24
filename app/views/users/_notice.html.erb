@@ -2,7 +2,6 @@
 <% if @month_count > 0 && current_user?(@user) %>
   <%= link_to "【所属長承認申請のお知らせ】", month_approval_path(@user), remote: true, :style=>"color:red;" %>
   <font color="red"><%= @month_count %>件の通知があります</font>
-  <%# raise %>
 <% else %>
   <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %>
 <% end %>
@@ -21,6 +20,16 @@
 <div id="attendance_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 </br>
 
+<!--勤怠変更申請が１件以上、かつ現在ログイン中Userの場合-->
+<% if @overtime_count > 0 && current_user?(@user)  %>
+  <%= link_to "【残業申請のお知らせ】", overtime_approval_path(@user), remote: true, :style=>"color:red;" %>
+  <font color="red"><%= @overtime_count %>件の通知があります</font>
+<% else %>
+  <%= link_to "【残業申請のお知らせ】", "#", remote: true %>
+<% end %>
+<!--残業申請モーダルウインドウ表示-->
+<div id="overtime_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+</br>
 
-<%= link_to "【残業申請のお知らせ】", edit_overwork_receive_path(@user), remote: true %>
+
 

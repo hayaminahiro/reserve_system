@@ -1,37 +1,5 @@
 <% provide(:title, @user.name) %>
-<div class="container">
-  <table class="table table-bordered table-condensed user-table">
-    <tr>
-      <% if current_user.id? %>
-        <td>
-          <div class="btn-users-show">
-            <% if @user.id == current_user.id %>
-              <%= link_to "◀︎", user_path(params: {id: @user.id, first_day: @first_day.prev_month }), class: "btn btn-primary btn-xs" %>
-              <%= l(@first_day, format: :long) %> 時間管理表
-              <%= link_to "▶︎", user_path(params: {id: @user.id, first_day: @first_day.next_month }), class: "btn btn-primary btn-xs" %>
-            <% end %>
-          </div>
-        </td>
-      <% end %>
-      <td>指定勤務開始時間　<%= format_basic_info(@user.designated_work_start_time) %></br>
-          指定勤務終了時間　<%= format_basic_info(@user.designated_work_end_time) %></td>
-      <td colspan="3">基本時間　<%= format_basic_info(@user.basic_work_time) %></td>
-      <td>初日　<%= l(@first_day, format: :short1) %></td>
-    </tr>
-    <tr>
-      <!--@user.affiliation(所属カラム)がtrueで存在する場合はそれを表示、falseの場合は未設定を表示-->
-      <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未設定" %></td>
-      <td>氏名：<%= @user.name %></td>
-      <td>コード</td>
-      <td>5555</td>
-      <!--@dates = user_attendances_month_date-->
-      <!--@worked_sum = @dates.where.not(started_at: nil).count-->
-      <!--@worked_sumは出勤日がnilでない = 出勤した日数を表す・・・Userコントローラー参照-->
-      <td>出勤日数：<%= @worked_sum %>日</td>
-      <td>締日　<%= l(@last_day, format: :short1) %></td>
-    </tr>
-  </table>
-</div>
+<%= render 'header_info_table' %>
 <% if @user.id == current_user.id %>
   <%= render 'users/notice' %>
 <% end %>
@@ -74,120 +42,7 @@
     </tr>
   </thead>
   <tbody>
-    <!--@attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)-->
-    <!--@attendancesは、@userに紐づくattendance情報で、１日から末日の範囲を代入-->
-    <% @dates.each do |day| %>
-      <tr>
-        <td>
-          <% if @user.id == current_user.id %>
-            <!--Userコントローラーのedit_overwork_requestアクションで @day = Date.parse(params[:day]) のように:dayをキーにして日付を取得。曜日は日付に基づいているからkey名は何でもOK-->
-            <%= link_to "残業申請", edit_overwork_request_path(@user, params:{ day: day.worked_on, wday: %w{日 月 火 水 木 金 土}[day.worked_on.wday] }), remote: true, class: "btn btn-primary" %>
-          <% end %>
-        </td>
-        <td>
-          <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
-          <%= l(day.worked_on, format: :short1) %>
-        </td>
-        <td>
-          <!--[日〜土（配列番号0~6）][0~6]で配列から曜日を選択/wdayは番号で曜日を表す（日曜から0番）-->
-          <!--dayは1日から始まる変数で、each文で@dates(1ヶ月分繰り返される)-->
-          <!--worked_onは日付のカラムを表し、wdayは曜日に変換するメソッド-->
-          <!--例：day.worked_onは=> Tue, 01 Oct 2019　/ これに.wdayすると =>2 つまり火曜日となる-->
-          <% $days_of_the_week[day.worked_on.wday] %>
-          <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
-          <% if day.worked_on.wday == 0 %>
-            <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
-          <% elsif day.worked_on.wday == 6 %>
-            <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
-          <% else %>
-            <%= $days_of_the_week[day.worked_on.wday] %>
-          <% end %>
-        </td>
-        <td>
-          <% if day.change_started.present? && day.attendance_approval == "承認" %>
-            <%= l(day.change_started, format: :hour)  %>
-          <% elsif day.started_at.present? && day.change_started.blank? %>
-            <%= l(day.started_at, format: :hour)  %>
-          <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
-            <%= l(day.started_at, format: :hour) %>
-          <% end %>
-        </td>
-        <td>
-          <% if day.change_started.present? && day.attendance_approval == "承認" %>
-            <%= l(day.change_started.floor_to(15.minutes), format: :min) %>
-          <% elsif day.started_at.present? && day.change_started.blank? %>
-            <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
-          <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
-            <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
-          <% end %>
-        </td>
-        <td>
-          <% if @user.id == current_user.id %>
-            <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
-            <% if day.worked_on == Date.today && day.started_at.nil? %>
-              <!--user_attendances_path →　attendances#create createする-->
-              <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-            <% end %>
-          <% end %>
-        </td>
-        <td>
-          <% if day.change_finished.present? && day.attendance_approval == "承認" %>
-            <%= l(day.change_finished, format: :hour)  %>
-          <% elsif day.finished_at.present? && day.change_finished.blank? %>
-            <%= l(day.finished_at, format: :hour)  %>
-          <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
-            <%= l(day.finished_at, format: :hour)  %>
-          <% end %>
-        </td>
-        <td>
-          <% if day.change_finished.present? && day.attendance_approval == "承認" %>
-            <%= l(day.change_finished.floor_to(15.minutes), format: :min) %>
-          <% elsif day.finished_at.present? && day.change_finished.blank? %>
-            <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
-          <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
-            <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
-          <% end %>
-        </td>
-        <td>
-          <% if @user.id == current_user.id %>
-            <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
-            <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
-              <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
-            <% end %>
-          <% end %>
-        </td>
-        <td>
-          <!--在社時間-->
-          <% if day.started_at.present? && day.finished_at.present? %>
-            <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
-            <!--非表示だが下記で在社時刻を計算-->
-            <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
-            <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
-            <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
-            <% @total_seconds = @total_seconds.to_i + seconds %>
-          <% end %>
-          </br>
-          <!--変更後の在社時間-->
-          <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %>
-            <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
-          <% elsif day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == true %>
-            <font color="blue">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
-          <% end %>
-        </td>
-        <td><%= day.note %></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-          <% if day.attendance_approval == "承認" %>
-            <font color="blue"><p>勤怠編集承認済</p></font>
-          <% elsif day.attendance_approval == "否認" %>
-            <font color="red"><p>勤怠編集否認</p></font>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
+    <%= render 'show_body' %>
   </tbody>
   <tfoot>
     <tr>
@@ -208,9 +63,3 @@
     </tr>
   </tfoot>
 </table>
-<!--残業申請モーダルウインドウ表示-->
-<div id="edit_overwork_request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<div id="edit_overwork_receive" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-<!--iヶ月勤怠申請モーダルウィンドウ表示-->
-<div id="month_attendances_confirmation" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
