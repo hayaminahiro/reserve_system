@@ -1,0 +1,245 @@
+<% @dates.each do |day| %>
+  <tr>
+    <td>
+      <% if @user.id == current_user.id %>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>">
+          残業申請
+        </button>
+        <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
+          <!--切り替えボタンの設定 -->
+          <div class="modal fade" id="myModal<%= day.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div id="over-modal-position">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">【残業申請】</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table table-bordered">
+                      <thead>
+                      <tr>
+                        <th class="title-position">日付</th>
+                        <th class="title-position">曜日</th>
+                        <th class="title-position">終了予定時間</th>
+                        <th class="title-position">翌日</th>
+                        <th class="title-position">業務処理内容</th>
+                        <th class="title-position">指示者確認㊞</th>
+                      </tr>
+                      </thead>
+                      <%= f.fields_for "attendances[]", day do |at| %>
+                        <tbody>
+                        <tr>
+                          <td>
+                            <%= l(day.worked_on, format: :short1) %>
+                          </td>
+                          <td>
+                            <% if day.worked_on.wday == 0 %>
+                              <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                            <% elsif day.worked_on.wday == 6 %>
+                              <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
+                            <% else %>
+                              <%= $days_of_the_week[day.worked_on.wday] %>
+                            <% end %>
+                          </td>
+                          <td><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
+                          <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
+                          <td><%= at.text_field :job_content, class: 'form-control' %></td>
+                          <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                          <!--申請月の@first_dayを自動で渡す-->
+                          <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                          <!--裏側でovertime_approval == "申請中"を渡したい-->
+                          <%= at.hidden_field :overtime_approval, value: "申請中" %>
+                          <!--裏側でovertime_check == falseにしたい-->
+                          <%= at.hidden_field :overtime_check, :value => false %>
+                        </tr>
+                        </tbody>
+                      <% end %>
+                    </table>
+                  </div>
+                  <div id="notice-message">
+                    <p>
+                      <img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />
+                      ①勤務時間内の申請はできません。②指示者確認㊞が未選択状態だと申請できません。
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="over-modal-footer">
+                      <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <!--残業申請ボタンのモーダルウインドウ表示-->
+      <div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+    </td>
+    <td> <!-- i18nのlメソッド/format: :~と記述することでja.ymlにあるフォーマットを指定できる-->
+      <%= l(day.worked_on, format: :short1) %>
+    </td>
+    <td>
+      <% $days_of_the_week[day.worked_on.wday] %>
+      <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
+      <% if day.worked_on.wday == 0 %>
+        <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
+      <% elsif day.worked_on.wday == 6 %>
+        <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
+      <% else %>
+        <%= $days_of_the_week[day.worked_on.wday] %>
+      <% end %>
+    </td>
+    <td>
+      <% if day.change_started.present? && day.attendance_approval == "承認" %>
+        <%= l(day.change_started, format: :hour)  %>
+      <% elsif day.started_at.present? && day.change_started.blank? %>
+        <%= l(day.started_at, format: :hour)  %>
+      <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
+        <%= l(day.started_at, format: :hour) %>
+      <% elsif day.started_at.present? && day.attendance_approval == "申請中"%>
+        <%= l(day.started_at, format: :hour) %>
+      <% end %>
+    </td>
+    <td>
+      <% if day.change_started.present? && day.attendance_approval == "承認" %>
+        <%= l(day.change_started.floor_to(15.minutes), format: :min) %>
+      <% elsif day.started_at.present? && day.change_started.blank? %>
+        <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
+      <% elsif day.started_at.present? && day.attendance_approval == "否認"%>
+        <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
+      <% elsif day.started_at.present? && day.attendance_approval == "申請中"%>
+        <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
+      <% end %>
+    </td>
+    <td>
+      <% if @user.id == current_user.id %>
+        <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
+        <% if day.worked_on == Date.today && day.started_at.nil? %>
+          <!--user_attendances_path →　attendances#create createする-->
+          <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+        <% end %>
+      <% end %>
+    </td>
+    <td>
+      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
+        <%= l(day.change_finished, format: :hour) %>
+      <% elsif day.finished_at.present? && day.change_finished.blank? %>
+        <%= l(day.finished_at, format: :hour) %>
+      <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
+        <%= l(day.finished_at, format: :hour) %>
+      <% elsif day.finished_at.present? && day.attendance_approval == "申請中"%>
+        <%= l(day.finished_at, format: :hour) %>
+      <% end %>
+    </td>
+    <td>
+      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
+        <%= l(day.change_finished.floor_to(15.minutes), format: :min) %>
+      <% elsif day.finished_at.present? && day.change_finished.blank? %>
+        <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
+      <% elsif day.finished_at.present? && day.attendance_approval == "否認"%>
+        <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
+      <% elsif day.finished_at.present? && day.attendance_approval == "申請中"%>
+        <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
+      <% end %>
+    </td>
+    <td>
+      <% if @user.id == current_user.id %>
+        <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
+        <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
+          <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+        <% end %>
+      <% end %>
+    </td>
+    <td> <!--在社時間-->
+      <% if day.started_at.present? && day.finished_at.present? %>
+        <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
+        <!--非表示だが下記で在社時刻を計算-->
+        <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
+        <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
+        <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
+        <% @total_seconds = @total_seconds.to_i + seconds %>
+      <% end %> </br>
+      <!--変更後の在社時間-->
+      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %>
+        <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+      <% elsif day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == true %>
+        <font color="blue">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+      <% end %>
+    </td>
+    <td><%= day.note %></td>
+    <td style="padding-right: 18px;">
+      <% if day.job_end_time.present? %>
+        　<%= l(day.job_end_time, format: :hour) %>
+      <% end %>
+    </td>
+    <td style="padding-right: 18px;">
+      <% if day.job_end_time.present? %>
+        　<%= l(day.job_end_time.floor_to(15.minutes), format: :min) %>
+      <% end %>
+    </td>
+    <td>
+      <% if day.job_end_time.present? %>
+        <!--job_end_time(終了予定時間) - designated_work_end_time（指定勤務終了時間)-->
+        <% if day.tomorrow_check_over == true %>
+          <%= tomorrow_check_over_times(@user.designated_work_end_time, day.job_end_time.floor_to(15.minutes)) %>
+        <% else %>
+          <%= overtime_result(@user.designated_work_end_time, day.job_end_time.floor_to(15.minutes)) %>
+        <% end %>
+      <% end %>
+    </td>
+    <td><%= day.job_content %></td>
+    <td>
+      <!--勤怠変更申請：上長名を定義-->
+      <% superior_name_at = "" %>
+      <% if day.superior_id_at == 2 %>
+        <% superior_name_at = @superior_a %>
+      <% elsif day.superior_id_at == 3 %>
+        <% superior_name_at = @superior_b %>
+      <% elsif day.superior_id_at == 4 %>
+        <% superior_name_at = @superior_c %>
+      <% end %>
+
+
+
+      <!--勤怠編集承認・否認結果表示-->
+      <% if day.attendance_approval == "承認" %>
+        <font color="blue"><p><%= superior_name_at %>： 勤怠編集承認済</p></font>
+      <% elsif day.attendance_approval == "否認" %>
+        <font color="red"><p><%= superior_name_at %>： 勤怠編集否認</p></font>
+      <% end %>
+
+
+
+
+
+
+
+      <!--残業申請：上長名を定義-->
+      <% superior_name_over = "" %>
+      <% if day.superior_id_over == 2 %>
+        <% superior_name_over = @superior_a %>
+      <% elsif day.superior_id_over == 3 %>
+        <% superior_name_over = @superior_b %>
+      <% elsif day.superior_id_over == 4 %>
+        <% superior_name_over = @superior_c %>
+      <% end %>
+      <!--残業申請承認・否認結果表示-->
+      <% if day.overtime_approval == "承認" %>
+        <font color="blue"><p><%= superior_name_over %>： 残業承認済</p></font>
+      <% elsif day.overtime_approval == "否認" %>
+        <font color="red"><p><%= superior_name_over %>： 残業否認</p></font>
+      <% end %>
+      <!--残業申請中である事を表示-->
+      <% if day.job_end_time.present? && day.overtime_approval == "申請中" %>
+        <label for="select1a">残業申請： <%= superior_name_over %>へ申請中</label>
+      <% end %>
+
+
+
+    </td>
+  </tr>
+<% end %>
