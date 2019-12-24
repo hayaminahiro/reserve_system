@@ -1,6 +1,7 @@
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval,
-                                  :overtime_application, :update_approval, :update_applicability, :attendance_log, :update_overtime]
+                                  :overtime_application, :update_approval, :update_applicability, :attendance_log,
+                                  :update_overtime, :overtime_approval, :update_overtime_approval]
   before_action :url_confirmation_attendances_edit_page, only: :edit
   
   def create
@@ -76,7 +77,7 @@ class AttendancesController < ApplicationController
         attendance.update_attributes(item)
       end
     end
-    flash[:success] = "勤怠変更申請返答しました。"
+    flash[:success] = "勤怠変更申請返答しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
     redirect_to user_path(@user)
   end
 
@@ -99,16 +100,6 @@ class AttendancesController < ApplicationController
   # 1ヶ月分勤怠申請/モーダル表示
   def month_approval
     @users = User.applied_superior(superior_id: current_user.id)
-    @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
-    @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
-    (@first_day..@last_day).each do |day| # 月の初日から終日までを表す
-      unless @user.attendances.any? {|attendance| attendance.worked_on == day}
-        record = @user.attendances.build(worked_on: day)
-        record.save
-      end
-    end
-    @dates = user_attendances_month_date # 1ヶ月の情報を表す・・・attendances_helper.rb参照
-    @attendance = User.all.includes(:attendances)
   end
 
   # 申請の承認可否の更新
@@ -162,13 +153,20 @@ class AttendancesController < ApplicationController
   end
 
   def overtime_approval
-    @user = User.find(params[:id])
     @users = User.all
-
-
   end
 
-
+  def update_overtime_approval
+    overtime_approval_params.each do |id, item|
+      # each分の中にヘルパーメソッドを記入する事で毎回処理をチェックできる
+      if overtime_approval_invalid?(item[:overtime_approval], item[:overtime_check])
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)
+      end
+    end
+    flash[:success] = "残業申請返答しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
+    redirect_to user_path(@user)
+  end
 
 
   private
@@ -197,7 +195,13 @@ class AttendancesController < ApplicationController
 
     # 残業申請カラム
     def update_overtime_params
-      params.permit(attendances: [:job_end_time, :tomorrow_check_over, :job_content, :superior_id_over, :apply_month_over])[:attendances]
+      params.permit(attendances: [:job_end_time, :tomorrow_check_over, :job_content, :superior_id_over,
+                                  :apply_month_over, :overtime_approval, :overtime_check])[:attendances]
+    end
+
+    # 残業申請承認・否認の更新
+    def overtime_approval_params
+      params.require(:user).permit(attendances: [:overtime_approval, :overtime_check])[:attendances]
     end
 
     # beforeアクション

@@ -34,7 +34,7 @@
                           <th class="title-position">勤怠を確認する</th>
                         </tr>
                       </thead>
-                      <%= f.fields_for "attendances[]", at do |af| %>
+                      <%= f.fields_for :attendances, at do |af| %>
                         <tbody>
                           <tr>
                             <td><%= l(at.apply_month, format: :month) %></td>
@@ -42,7 +42,7 @@
                               <%= af.select :month_approval, Attendance.month_approvals.keys.to_a, {}, { class: "form-control" } %>
                             </td>
                             <td width="45px">
-                              <%= af.check_box :month_check, incude_hidden: false %>
+                              <%= af.check_box :month_check, include_hidden: false %>
                             </td>
                             <td>
                               <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month ), class: 'btn btn-primary' %>

@@ -25,6 +25,15 @@ module AttendancesHelper
   def working_times_sum(seconds)
     format("%.2f", seconds / 60 / 60.0)
   end
+
+  # 時間外時間を計算
+  def overtime_result(designated_work_end_time, job_end_time )
+    format("%.2f", (((job_end_time - designated_work_end_time) /60) / 60.0))
+  end
+
+
+
+
   
   # @first_dayの定義
   # まず当日を取得するためDate.currentを使用
@@ -137,6 +146,16 @@ module AttendancesHelper
       if time.strftime("%H:%M:%S") > item[:job_end_time]
         overtime = false
       end
+    end
+    overtime
+  end
+
+  # 勤怠変更申請ボタン：選択肢の確認
+  def overtime_approval_invalid?(op, oc)
+    if (op == "承認" || op == "否認") and oc == "1"
+      overtime = true
+    else
+      overtime = false
     end
     overtime
   end

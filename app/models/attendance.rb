@@ -25,10 +25,10 @@ class Attendance < ApplicationRecord
   end
 
   # 1ヶ月勤怠申請
-  enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3 }, _suffix: true # 同じenum名定義できる
+  enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4 }, _suffix: true # 同じenum名定義できる
   # 勤怠変更申請
-  enum attendance_approval: {"申請中" => 1, "承認" => 2, "否認" => 3}, _suffix: true
-
-
+  enum attendance_approval: {"申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4}, _suffix: true
+  # 残業申請
+  enum overtime_approval: { "申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4}, _suffix: true
 end
 

@@ -1,5 +1,5 @@
 <% provide(:title, @user.name) %>
-<div class="container">
+<div class="container" style="margin-top: 20px;">
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <% if current_user.id? %>
@@ -126,7 +126,12 @@
                               <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
                               <td><%= at.text_field :job_content, class: 'form-control' %></td>
                               <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                              <!--申請月の@first_dayを自動で渡す-->
                               <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                              <!--裏側でovertime_approval == "申請中"を渡したい-->
+                              <%= at.hidden_field :overtime_approval, value: "申請中" %>
+                              <!--裏側でovertime_check == falseにしたい-->
+                              <%= at.hidden_field :overtime_check, :value => false %>
                             </tr>
                             </tbody>
                           <% end %>

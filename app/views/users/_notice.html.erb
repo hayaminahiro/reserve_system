@@ -2,7 +2,6 @@
 <% if @month_count > 0 && current_user?(@user) %>
   <%= link_to "【所属長承認申請のお知らせ】", month_approval_path(@user), remote: true, :style=>"color:red;" %>
   <font color="red"><%= @month_count %>件の通知があります</font>
-  <%# raise %>
 <% else %>
   <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %>
 <% end %>

@@ -57,7 +57,7 @@ class UsersController < ApplicationController
     # 勤怠変更申請
     @attendance_change_count = Attendance.where(superior_id_at: current_user).where(attendance_check: false).count
     # 残業申請
-    @overtime_count = Attendance.where(superior_id_over: current_user).where.not(job_end_time: nil).count
+    @overtime_count = Attendance.where(superior_id_over: current_user).where(overtime_check: false).count
     # applied_superior(1ヶ月申請) ➡︎ 自分以外の上長id
     @users = User.where(admin: false).applied_superior(superior_id: current_user.id)
     # 申請上長の名前
