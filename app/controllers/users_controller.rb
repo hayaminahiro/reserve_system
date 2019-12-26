@@ -1,9 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, 
-          :update_basic_info, :edit_personal_info, :update_personal_info, :edit_overwork_request,
-          :update_overwork_request]
-  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info,
-          :update_basic_info, :edit_overwork_request, :update_overwork_request]
+          :update_basic_info, :edit_personal_info, :update_personal_info]
+  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
@@ -41,6 +39,10 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
+    # first_day: 値 ➡︎ 左のように、first_dayがキーになっている情報を受け取って@first_dayに代入
+    # def first_day(date)
+    #  !date.nil? ? Date.parse(date) : Date.current.beginning_of_month
+    # end
     @first_day = first_day(params[:first_day])
     @last_day = @first_day.end_of_month
     (@first_day..@last_day).each do |day|
@@ -58,12 +60,24 @@ class UsersController < ApplicationController
     @attendance_change_count = Attendance.where(superior_id_at: current_user).where(attendance_check: false).count
     # 残業申請
     @overtime_count = Attendance.where(superior_id_over: current_user).where(overtime_check: false).count
-    # applied_superior(1ヶ月申請) ➡︎ 自分以外の上長id
-    @users = User.where(admin: false).applied_superior(superior_id: current_user.id)
+    # 1ヶ月申請と残業申請の@users
+    @users = User.where(admin: false).where(superior: true).where.not(id: current_user.id)
+    # 1ヶ月申請、自分以外の上長id
+    #@users = User.where(admin: false).applied_superior(superior_id: current_user.id)
+    # 残業申請、自分以外の上長id
+    #@users_over = User.where(admin: false).applied_superior_over(superior_id_over: current_user.id)
     # 申請上長の名前
     @superior_a = User.find_by(id: 2).name #上長A
     @superior_b = User.find_by(id: 3).name #上長A
     @superior_c = User.find_by(id: 4).name #上長A
+    #CSV出力
+    respond_to do |format|
+      format.html
+      format.csv do
+        #csv用の処理を書く
+        send_data render_to_string, filename: "#{current_user.name} 勤怠情報 #{params[:first_day].to_date.strftime("%Y年%m月")}.csv", type: :csv
+      end
+    end
   end
   
   def new
@@ -164,8 +178,8 @@ class UsersController < ApplicationController
     
     # showページ：他のユーザーのページをURL上で入力しても拒否
     def url_confirmation_show_page
-      @user = User.find(params[:id])
-      if not current_user.admin? || current_user.superior?
+      #@user = User.find(params[:id])
+      unless current_user.admin? || current_user.superior?
         unless @user.id == @current_user.id
           flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
           redirect_to root_url

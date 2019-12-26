@@ -33,7 +33,8 @@ class AttendancesController < ApplicationController
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
     # 自分以外の上長
-    @users = User.where(admin: false).applied_superior_at(superior_id_at: current_user.id)
+    #@users = User.where(admin: false).applied_superior_at(superior_id_at: current_user.id)
+    @users = User.where(admin: false).where(superior: true).where.not(id: current_user.id)
   end
 
   # 勤怠情報update
