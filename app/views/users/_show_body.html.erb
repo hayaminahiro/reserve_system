@@ -83,7 +83,6 @@
       <%= l(day.worked_on, format: :short1) %>
     </td>
     <td>
-      <% $days_of_the_week[day.worked_on.wday] %>
       <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
       <% if day.worked_on.wday == 0 %>
         <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
@@ -94,16 +93,16 @@
       <% end %>
     </td>
     <td>
-      <% if day.change_started.present? %> <!--勤怠変更時間が存在する場合-->
-        <%= l(day.change_started, format: :hour)  %>
-      <% elsif day.started_at.present? %> <!--出社時間が存在する場合-->
+      <% if day.change_started.present? && day.attendance_approval == "承認" %>
+        <%= l(day.change_started, format: :hour) %>
+      <% elsif day.started_at.present? && day.attendance_approval != "承認" %>
         <%= l(day.started_at, format: :hour) %>
       <% end %>
     </td>
     <td>
-      <% if day.change_started.present? %>
+      <% if day.change_started.present? && day.attendance_approval == "承認" %>
         <%= l(day.change_started.floor_to(15.minutes), format: :min) %>
-      <% elsif day.started_at.present? %>
+      <% elsif day.started_at.present? && day.attendance_approval != "承認"%>
         <%= l(day.started_at.floor_to(15.minutes), format: :min) %>
       <% end %>
     </td>
@@ -117,16 +116,16 @@
       <% end %>
     </td>
     <td>
-      <% if day.change_finished.present? %>
+      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
         <%= l(day.change_finished, format: :hour) %>
-      <% elsif day.finished_at.present? %>
+      <% elsif day.finished_at.present? && day.attendance_approval != "承認" %>
         <%= l(day.finished_at, format: :hour) %>
       <% end %>
     </td>
     <td>
-      <% if day.change_finished.present? %>
+      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
         <%= l(day.change_finished.floor_to(15.minutes), format: :min) %>
-      <% elsif day.finished_at.present? %>
+      <% elsif day.finished_at.present? && day.attendance_approval != "承認"%>
         <%= l(day.finished_at.floor_to(15.minutes), format: :min) %>
       <% end %>
     </td>
@@ -139,7 +138,7 @@
       <% end %>
     </td>
     <td> <!--在社時間-->
-      <% if day.started_at.present? && day.finished_at.present? %>
+      <% if day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" %>
         <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
         <!--非表示だが下記で在社時刻を計算-->
         <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
@@ -147,25 +146,29 @@
         <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
         <% @total_seconds = @total_seconds.to_i + seconds %>
       <% end %> </br>
-      <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %> <!--通常の編集後在社時間-->
+      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %> <!--通常の編集後在社時間-->
         <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
-      <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %> <!--翌日チェック有の編集後在社時間-->
+      <% elsif day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == true %> <!--翌日チェック有の編集後在社時間-->
         <font color="blue">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
       <% end %>
     </td>
-    <td><%= day.note %></td>
+    <td>
+      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
+        <%= day.note %>
+      <% end %>
+    </td>
     <td style="padding-right: 18px;">
-      <% if day.job_end_time.present? %>
+      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
         　<%= l(day.job_end_time, format: :hour) %>
       <% end %>
     </td>
     <td style="padding-right: 18px;">
-      <% if day.job_end_time.present? %>
+      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
         　<%= l(day.job_end_time.floor_to(15.minutes), format: :min) %>
       <% end %>
     </td>
     <td>
-      <% if day.job_end_time.present? %>
+      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
         <!--job_end_time(終了予定時間) - designated_work_end_time（指定勤務終了時間)-->
         <% if day.tomorrow_check_over == true %>
           <%= tomorrow_check_over_times(@user.designated_work_end_time, day.job_end_time.floor_to(15.minutes)) %>
@@ -174,7 +177,11 @@
         <% end %>
       <% end %>
     </td>
-    <td><%= day.job_content %></td>
+    <td>
+      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
+        <%= day.job_content %>
+      <% end %>
+    </td>
     <td>
       <!--勤怠変更申請：上長名を定義-->
       <% superior_name_at = "" %>
