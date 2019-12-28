@@ -8,7 +8,7 @@
   <% if @user.id == current_user.id %>
     <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
     <%= link_to "CSV出力", user_path(@user, first_day: @first_day, format: :csv), class: "btn btn-primary btn-primary" %>
-    <%= link_to "勤怠修正ログ(承認済み)", attendance_log_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
+    <%= render 'show_log' %>
   <% end %>
 </div>
 <table class="table table-striped table-bordered table-condensed table-hover user-table">
