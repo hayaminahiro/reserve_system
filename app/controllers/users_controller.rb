@@ -62,6 +62,8 @@ class UsersController < ApplicationController
     @overtime_count = Attendance.where(superior_id_over: current_user).where(overtime_check: false).count
     # 1ヶ月申請と残業申請の@users
     @users = User.where(admin: false).where(superior: true).where.not(id: current_user.id)
+    #勤怠ログで使用
+    @users_all = User.all
     # 1ヶ月申請、自分以外の上長id
     #@users = User.where(admin: false).applied_superior(superior_id: current_user.id)
     # 残業申請、自分以外の上長id
@@ -128,6 +130,37 @@ class UsersController < ApplicationController
   # 出勤中社員一覧
   def currently_working
     @working_users = User.all.includes(:attendances)
+  end
+
+  def work_log
+    work_ids = current_user.works.ids
+    if params[:value_year]
+      date = Date.new(params[:value_year].to_i, params[:value_month].to_i)
+      @logs = WorkLog.page(params[:page]).per(30)
+                  .where(work_id: work_ids)
+                  .where(day: date.beginning_of_month..date.end_of_month)
+    else
+      @logs = WorkLog.page(params[:page]).per(30).where(work_id: work_ids)
+                  .where(day: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month)
+    end
+    # view_contextでpaginateメソッドを使いパーシャルの中身と同じものを生成
+    paginator = view_context.paginate(
+        @logs,
+        remote: true
+    )
+
+    # render_to_stringでパーシャルの中身を生成
+    logs = render_to_string(
+        partial: 'table_work_log',
+        locals: { logs: @logs }
+    )
+    if request.xhr?
+      render json: {
+          paginator: paginator,
+          logs: logs,
+          success: true # クライアント(js)側へsuccessを伝えるために付加
+      }
+    end
   end
 
   private

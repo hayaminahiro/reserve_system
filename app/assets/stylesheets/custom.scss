@@ -246,7 +246,7 @@ input[type="text"] {
 .modal-content {
   width: 180%;
   margin-left:-250px;
-  margin-top: 20px;
+  margin-top: -80px;
   border: none;
 }
 
@@ -303,6 +303,7 @@ input[type="checkbox"]{
 
 #exampleModalLabel {
   font-size: 30px;
+  text-align: center;
 }
 
 .over-modal-footer {
@@ -322,7 +323,12 @@ input[type="checkbox"]{
   margin-right: 815px;
 }
 
-
+.btn-default {
+  color: #333;
+  background-color: #DADADA;
+  border-color: #ccc;
+  padding: 7px 70px;
+}
 
 
 
