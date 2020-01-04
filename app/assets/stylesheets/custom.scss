@@ -251,11 +251,13 @@ input[type="text"] {
 }
 
 .modal-body {
-  // display: block;
   align-items: center;
   vertical-align: center;
   text-align: center;
-  // display: table-cell;
+}
+
+.modal-footer {
+  margin-bottom: 100px;
 }
 
 .table-bordered {
