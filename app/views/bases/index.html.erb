@@ -12,14 +12,13 @@
       <th class="col-xs-4">拠点種類</th>
     </tr>
   </thead>
- 
   <tbody>
     <% @bases.each do |base| %>
       <tr>
         <td><%= link_to "修正", edit_basis_path(base.id), class: "btn btn-primary" %></td>
         <td>
            <%= link_to "削除", base, method: :delete, class: "btn btn-primary",
-                                        data: { confirm: "削除しますか?" } %></br>
+                       data: { confirm: "削除しますか?" } %><br>
         </td>
         <td><%= base.base_number %></td>
         <td><%= base.base_name %></td>
@@ -27,7 +26,9 @@
       </tr>
     <% end %>
     <tr>
-      <td colspan="5"><%= link_to "拠点追加", new_basis_path, class: "btn btn-primary base-btn" %></td>
+      <td colspan="5">
+        <%= link_to "拠点追加", new_basis_path, class: "btn btn-primary base-btn" %>
+      </td>
     </tr>
   </tbody>
 </table>

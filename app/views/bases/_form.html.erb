@@ -1,5 +1,5 @@
 <%= form_with model: @base, local: true do |f| %>
-  <%= render 'shared/error_messages_base' %>
+  <%= render 'shared/error_messages', model: f.object %>
   
   <%= f.label :base_number %>
   <%= f.text_field :base_number, class: 'form-control' %>
