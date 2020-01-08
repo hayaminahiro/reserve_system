@@ -41,12 +41,12 @@
                 <td>
                   <%= af.time_field :change_started, class: 'form-control' %>
                   <!--判断材料として変更前の出勤記録も表示-->
-                  <font color="red"><%= l(day.started_at.floor_to(15.minutes), format: :time) if day.started_at.present? %></font>
+                  <font color="#db7093"><%= l(day.started_at.floor_to(15.minutes), format: :time) if day.started_at.present? %></font>
                 </td>
                 <td>
                   <%= af.time_field :change_finished, class: 'form-control' %>
                   <!--判断材料として変更前の退勤記録も表示-->
-                  <font color="red"><%= l(day.finished_at.floor_to(15.minutes), format: :time) if day.finished_at.present? %></font>
+                  <font color="#db7093"><%= l(day.finished_at.floor_to(15.minutes), format: :time) if day.finished_at.present? %></font>
                 </td>
               <% end %>
               <td width="40">
@@ -54,14 +54,14 @@
               <td>
                 <!--変更後の在社時間-->
                 <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %>
-                  <font color="blue">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+                  <font color="#4169e1">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
                 <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %>
-                  <font color="blue">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+                  <font color="#4169e1">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
                 <% end %>
                 </br>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  <font color="red">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
+                  <font color="#db7093">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %></font>
                 <% end %>
               </td>
               <td><%= af.text_field :note, class: 'form-control' %></td>

@@ -28,12 +28,7 @@ module AttendancesHelper
 
   # 時間外時間を計算
   def overtime_result(work_end_time, job_end_time)
-    format("%.2f", (((job_end_time - work_end_time) /60) / 60.0))
-  end
-
-  # 翌日チェックのある時間外時間の合計を計算
-  def tomorrow_check_over_times(work_end_time, job_end_time)
-    format("%.2f", (((job_end_time - work_end_time) /60) / 60.0) + 24)
+    job_end_time - work_end_time
   end
   
   # @first_dayの定義
@@ -139,7 +134,7 @@ module AttendancesHelper
 
   # 残業申請時間が勤務時間内かをチェック
   def overtime_range_invalid?
-    time = @user.designated_work_end_time # 指定勤務終了時間を@timeに代入
+    time = @user.designated_work_end_time # 指定勤務終了時間をtimeに代入
     overtime = true
     update_overtime_params.each do |id, item|
       # 終了予定時間が指定勤務終了時間より早い場合 ➡︎ false
