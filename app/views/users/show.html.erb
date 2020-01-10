@@ -1,11 +1,13 @@
 <% provide(:title, @user.name) %>
 <%= render 'header_info_table' %>
-<% if @user.id == current_user.id || current_user.admin %>
-  <%= render 'users/notice' %>
+<% if @user.id == current_user.id %>
+  <% if current_user.superior %>
+    <%= render 'users/notice' %>
+  <% end %>
 <% end %>
 <!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
 <div class="csv-edit-button">
-  <% if @user.id == current_user.id || current_user.admin %>
+  <% if @user.id == current_user.id %>
     <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
     <%= link_to "CSV出力", user_path(@user, first_day: @first_day, format: :csv), class: "btn btn-primary btn-primary" %>
     <%= render 'show_log' %>

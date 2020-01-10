@@ -3,7 +3,7 @@
   <%= link_to "【所属長承認申請のお知らせ】", month_approval_path(@user), remote: true, :style=>"color:red;" %>
   <font color="red"><%= @month_count %>件の通知があります</font>
 <% else %>
-  <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %>
+  <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true, :style=>"color:#333333" %>
 <% end %>
 <!--所属長申請モーダルウインドウ表示-->
 <div id="month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
@@ -14,7 +14,7 @@
   <%= link_to "【勤怠変更申請のお知らせ】", attendance_approval_path(@user), remote: true, :style=>"color:red;" %>
   <font color="red"><%= @attendance_change_count %>件の通知があります</font>
 <% else %>
-  <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true %>
+  <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true, :style=>"color:#333333" %>
 <% end %>
 <!--勤怠変更申請モーダルウインドウ表示-->
 <div id="attendance_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
@@ -25,7 +25,7 @@
   <%= link_to "【残業申請のお知らせ】", overtime_approval_path(@user), remote: true, :style=>"color:red;" %>
   <font color="red"><%= @overtime_count %>件の通知があります</font>
 <% else %>
-  <%= link_to "【残業申請のお知らせ】", "#", remote: true %>
+  <%= link_to "【残業申請のお知らせ】", "#", remote: true, :style=>"color:#333333" %>
 <% end %>
 
 <!--残業申請モーダルウインドウ表示-->

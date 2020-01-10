@@ -7,6 +7,7 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
   before_action :url_confirmation_show_page, only: :show
   before_action :url_confirmation_index_page, only: :index
+  before_action :url_admin_show_page, only: :show
   
   protect_from_forgery :except => [:import]
   
@@ -20,7 +21,7 @@ class UsersController < ApplicationController
   def import
     # fileはtmpに自動で一時保存される
     User.import(params[:file])
-    flash[:success] = "ユーザー情報をCSVインポートしました！"
+    flash[:success] = "ユーザー情報をCSVインポートしました。"
     redirect_to users_url
   end
   
@@ -90,7 +91,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
-      flash[:success] = "ユーザー新規作成に成功!"
+      flash[:success] = "ユーザー新規作成に成功しました。"
       redirect_to @user
     else
       render 'new'
@@ -181,10 +182,9 @@ class UsersController < ApplicationController
     
     # showページ：他のユーザーのページをURL上で入力しても拒否
     def url_confirmation_show_page
-      #@user = User.find(params[:id])
-      unless current_user.admin? || current_user.superior?
+      unless current_user.superior?
         unless @user.id == @current_user.id
-          flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+          flash[:danger] = "ユーザー情報の閲覧・編集はできません。"
           redirect_to root_url
         end
       end
@@ -197,4 +197,12 @@ class UsersController < ApplicationController
         redirect_to root_url
       end
     end
+
+    #管理者自身がURL直接入力するとtopページに戻る
+    def url_admin_show_page
+      if current_user.admin?
+        redirect_to root_url
+      end
+    end
+
 end
