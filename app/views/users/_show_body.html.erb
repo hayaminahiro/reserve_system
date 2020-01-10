@@ -1,7 +1,7 @@
 <% @dates.each do |day| %>
   <tr>
     <td>
-      <% if @user.id == current_user.id %>
+      <% if @user.id == current_user.id || current_user.admin %>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>">
           残業申請
         </button>
@@ -107,7 +107,7 @@
       <% end %>
     </td>
     <td>
-      <% if @user.id == current_user.id %>
+      <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
         <% if day.worked_on == Date.today && day.started_at.nil? %>
           <!--user_attendances_path →　attendances#create createする-->
@@ -130,7 +130,7 @@
       <% end %>
     </td>
     <td>
-      <% if @user.id == current_user.id %>
+      <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
         <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
           <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
