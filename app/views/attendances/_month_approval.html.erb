@@ -10,7 +10,7 @@
         <% @users.each do |user| %>
           <div class="modal-body"> <!--モーダルボディ-->
             <table class="table table-bordered table-condensed table-hover">
-              <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
+              <% attendances = Attendance.where(user_id: user.id) %>
               <% attendances.each do |at| %>
                 <% if at.superior_id == current_user.id %>
                   <% if at.month_approval == "申請中" || at.month_check == false %>
