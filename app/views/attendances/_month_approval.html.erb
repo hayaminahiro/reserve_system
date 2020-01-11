@@ -1,39 +1,39 @@
 <div class="modal-dialog modal-dialog-center">
   <%= form_with(model: @user, url: update_approval_path(@user), local: true, method: :patch) do |f| %>
-    <% @users.each do |user| %>
-      <div class="modal-position">
-        <div class="modal-content">
-          <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
-          <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id %>
-              <% if at.month_approval == "申請中" || at.month_check == false %>
-                <% if at.apply_month.present? %> <!--1ヶ月申請特有のapply_monthカラムで表示可否判定-->
-                  <div class="modal-header">
-                    <h4 class="modal-title">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <% break %>
+    <div class="modal-position">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <% @users.each do |user| %>
+          <div class="modal-body"> <!--モーダルボディ-->
+            <table class="table table-bordered table-condensed table-hover">
+              <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
+              <% attendances.each do |at| %>
+                <% if at.superior_id == current_user.id %>
+                  <% if at.month_approval == "申請中" || at.month_check == false %>
+                    <% if at.apply_month.present? %> <!--1ヶ月申請特有のapply_monthカラムで表示可否判定-->
+                      <h4 class="modal-title" style="padding-bottom: 10px;">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
+                        <thead>
+                          <tr>
+                            <th class="title-position">月</th>
+                            <th class="title-position">指示者確認㊞</th>
+                            <th class="title-position">変更</th>
+                            <th class="title-position">勤怠を確認する</th>
+                          </tr>
+                        </thead>
+                      <% break %>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
-            <% end %>
-          <% end %>
-          <% attendances = Attendance.where(user_id: user.id) %>
-          <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id%>
-              <% if at.month_approval == "申請中" || at.month_check == false %>
-                <% if at.apply_month.present? %>
-                  <div class="modal-body"> <!--モーダルボディ-->
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th class="title-position">月</th>
-                          <th class="title-position">指示者確認㊞</th>
-                          <th class="title-position">変更</th>
-                          <th class="title-position">勤怠を確認する</th>
-                        </tr>
-                      </thead>
+              <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルヘッダー-->
+              <% attendances.each do |at| %>
+                <% if at.superior_id == current_user.id %>
+                  <% if at.month_approval == "申請中" || at.month_check == false %>
+                    <% if at.apply_month.present? %> <!--1ヶ月申請特有のapply_monthカラムで表示可否判定-->
                       <%= f.fields_for "attendances[]", at do |af| %>
                         <tbody>
                           <tr>
@@ -50,30 +50,20 @@
                           </tr>
                         </tbody>
                       <% end %>
-                    </table>
-                  </div>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
-            <% end %>
-          <% end %>
-          <% attendances = Attendance.where(user_id: user.id) %> <!--モーダルフッター-->
-          <% attendances.each do |at| %>
-            <% if at.superior_id == current_user.id%>
-              <% if at.month_approval == "申請中" || at.month_check == false %>
-                <% if at.apply_month.present? %>
-                  <div class="modal-footer">
-                    <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
-                    <div id="change-btn">
-                      <%= f.submit "変更を送信する", class: "btn btn-primary" %>
-                    </div>
-                  </div>
-                <% end %>
-                <% break %>
-              <% end %>
-            <% end %>
-          <% end %>
+            </table>
+          </div>
+        <% end %>
+        <div class="modal-footer">
+          <p><img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />①指示者確認㊞が申請中の状態だと申請できません。②申請する場合は変更にチェックを入れて下さい。</p>
+          <div id="change-btn">
+            <%= f.submit "変更を送信する", class: "btn btn-primary" %>
+          </div>
         </div>
       </div>
-    <% end %>
+    </div>
   <% end %>
 </div>
