@@ -2,7 +2,7 @@
   <tr>
     <td>
       <% if @user.id == current_user.id || current_user.admin %>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal<%= day.id %>">
           残業申請
         </button>
         <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
