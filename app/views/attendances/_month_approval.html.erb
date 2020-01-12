@@ -16,7 +16,7 @@
                   <% if at.month_approval == "申請中" || at.month_check == false %>
                     <% if at.apply_month.present? %> <!--1ヶ月申請特有のapply_monthカラムで表示可否判定-->
                       <h4 class="modal-title" style="padding-bottom: 10px;">【<%= user.name %>からの１ヶ月分勤怠申請】</h4>
-                        <thead>
+                        <thead style="background: #F7F7F7">
                           <tr>
                             <th class="title-position">月</th>
                             <th class="title-position">指示者確認㊞</th>

@@ -361,9 +361,30 @@ input[type="checkbox"]{
   color: #777777;
 }
 
+//お知らせリンク
+.notice {
+  color: red;
+  margin: 0;
+  font-size: 14px;
+}
 
+.notice_black {
+  color: #333333;
+  margin: 0;
+  font-size: 14px;
+}
 
+.notice_radius {
+  color: red;
+  background: #FFF;
+  border: solid 1px red;/*線*/
+  border-radius: 2px;/*角の丸み*/
+  padding: 0.5px;
+}
 
+a.notice_radius {
+  color: red;
+}
 
 
 
