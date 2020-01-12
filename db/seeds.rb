@@ -46,7 +46,7 @@ User.create!(name:  "上長C",
              designated_work_end_time: Time.current.change(hour: 18, min: 0, sec: 0),
              superior: true)
 
-User.create!(name:  "hayato",
+User.create!(name:  "hayato.s",
              email: "hayato@email.com",
              affiliation: "フリーランス事業部",
              employee_number: 4,

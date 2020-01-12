@@ -1,4 +1,6 @@
 class BasesController < ApplicationController
+  before_action :url_confirmation_page, only: [:index, :new]
+
   def index
     @bases = Base.all
   end
@@ -40,10 +42,22 @@ class BasesController < ApplicationController
     flash[:success] = "拠点情報を削除しました。"
     redirect_to bases_url
   end
+
+  private
   
-  def base_params
-    params.require(:base).permit(:base_number, :base_name, :attendance_type)
-  end
+    def base_params
+      params.require(:base).permit(:base_number, :base_name, :attendance_type)
+    end
+
+    # beforeアクション
+
+    # adminユーザー以外、URL直接入力してもページを開けない
+    def url_confirmation_page
+      unless current_user.admin?
+        flash[:danger] = "一般ユーザーの閲覧はできません。"
+        redirect_to root_url
+      end
+    end
   
 end
 

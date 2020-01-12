@@ -57,11 +57,13 @@
                             <% if at.tomorrow_check_over == true %>
                               <% hour = overtime_result(@user.designated_work_end_time.to_time.hour, at.job_end_time.floor_to(15.minutes).to_time.hour) %>
                               <% min = overtime_result(@user.designated_work_end_time.to_time.min, at.job_end_time.floor_to(15.minutes).to_time.min) %>
-                              <%= hour + (min/60.0) + 24 %> h
+                              <% time = hour + (min/60.0) + 24 %>
+                              <%= format("%.2f", time) %> h
                             <% else %>
                               <% hour = overtime_result(@user.designated_work_end_time.to_time.hour, at.job_end_time.floor_to(15.minutes).to_time.hour) %>
                               <% min = overtime_result(@user.designated_work_end_time.to_time.min, at.job_end_time.floor_to(15.minutes).to_time.min) %>
-                              <%= hour + (min/60.0) %> h
+                              <% time = hour + (min/60.0) %>
+                              <%= format("%.2f", time) %> h
                             <% end %>
                           </td>
                           <td><%= at.job_content %></td>

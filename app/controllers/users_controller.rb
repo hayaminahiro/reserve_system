@@ -6,8 +6,9 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
   before_action :url_confirmation_show_page, only: :show
-  before_action :url_confirmation_index_page, only: :index
+  before_action :url_confirmation_page, only: [:index, :currently_working]
   before_action :url_admin_show_page, only: :show
+  before_action :url_superior_to_admin_show, only: :show
   
   protect_from_forgery :except => [:import]
   
@@ -190,18 +191,27 @@ class UsersController < ApplicationController
       end
     end
 
-    # adminユーザー以外、URL直接入力してもindexページを開けない
-    def url_confirmation_index_page
+    # adminユーザー以外、URL直接入力してもページを開けない
+    def url_confirmation_page
       unless current_user.admin?
         flash[:danger] = "一般ユーザーの閲覧はできません。"
         redirect_to root_url
       end
     end
 
-    #管理者自身がURL直接入力するとtopページに戻る
+    # 管理者自身がURL直接入力するとtopページに戻る
     def url_admin_show_page
       if current_user.admin?
         redirect_to root_url
+      end
+    end
+
+    #上長ユーザーは管理者勤怠showページを閲覧不可
+    def url_superior_to_admin_show
+      if current_user.superior?
+        if @user.id == 1
+          redirect_to root_url
+        end
       end
     end
 
