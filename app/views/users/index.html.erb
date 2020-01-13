@@ -13,11 +13,12 @@
     </div>
   </div>
   <% @users.each do |user| %>
-    <tr>
-      <td><%= user.name %> <br>
-       <% if current_user.admin? %>
-         <% if !current_user?(user) %>&nbsp;&nbsp;&nbsp;&nbsp;
-            <%= link_to "削除", user, method: :delete, class: "btn btn-primary", data: { confirm: "削除しますか?" } %><br>
+    <tr style="font-size: 18px;">
+      <td><br>
+        <%= user.name %><br>
+        <% if current_user.admin? %>
+         <% if !current_user?(user) %>
+            &nbsp;&nbsp;&nbsp;<%= link_to "削除", user, method: :delete, class: "btn btn-primary", data: { confirm: "削除しますか?" } %><br>
          <% end %>
           <div class="panel-group">
             <div class="panel panel-default">

@@ -6,7 +6,9 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
   before_action :url_confirmation_show_page, only: :show
-  before_action :url_confirmation_index_page, only: :index
+  before_action :url_confirmation_page, only: [:index, :currently_working]
+  before_action :url_admin_show_page, only: :show
+  before_action :url_superior_to_admin_show, only: :show
   
   protect_from_forgery :except => [:import]
   
@@ -20,7 +22,7 @@ class UsersController < ApplicationController
   def import
     # fileはtmpに自動で一時保存される
     User.import(params[:file])
-    flash[:success] = "ユーザー情報をCSVインポートしました！"
+    flash[:success] = "ユーザー情報をCSVインポートしました。"
     redirect_to users_url
   end
   
@@ -90,7 +92,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
-      flash[:success] = "ユーザー新規作成に成功!"
+      flash[:success] = "ユーザー新規作成に成功しました。"
       redirect_to @user
     else
       render 'new'
@@ -181,20 +183,36 @@ class UsersController < ApplicationController
     
     # showページ：他のユーザーのページをURL上で入力しても拒否
     def url_confirmation_show_page
-      #@user = User.find(params[:id])
-      unless current_user.admin? || current_user.superior?
+      unless current_user.superior?
         unless @user.id == @current_user.id
-          flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+          flash[:danger] = "ユーザー情報の閲覧・編集はできません。"
           redirect_to root_url
         end
       end
     end
 
-    # adminユーザー以外、URL直接入力してもindexページを開けない
-    def url_confirmation_index_page
+    # adminユーザー以外、URL直接入力してもページを開けない
+    def url_confirmation_page
       unless current_user.admin?
         flash[:danger] = "一般ユーザーの閲覧はできません。"
         redirect_to root_url
       end
     end
+
+    # 管理者自身がURL直接入力するとtopページに戻る
+    def url_admin_show_page
+      if current_user.admin?
+        redirect_to root_url
+      end
+    end
+
+    #上長ユーザーは管理者勤怠showページを閲覧不可
+    def url_superior_to_admin_show
+      if current_user.superior?
+        if @user.id == 1
+          redirect_to root_url
+        end
+      end
+    end
+
 end

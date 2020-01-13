@@ -1,8 +1,8 @@
 <% @dates.each do |day| %>
   <tr>
     <td>
-      <% if @user.id == current_user.id %>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>">
+      <% if @user.id == current_user.id || current_user.admin %>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal<%= day.id %>">
           残業申請
         </button>
         <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
@@ -19,7 +19,7 @@
                   </div>
                   <div class="modal-body">
                     <table class="table table-bordered">
-                      <thead>
+                      <thead style="background: #F7F7F7">
                       <tr>
                         <th class="title-position">日付</th>
                         <th class="title-position">曜日</th>
@@ -32,9 +32,7 @@
                       <%= f.fields_for "attendances[]", day do |at| %>
                         <tbody>
                         <tr>
-                          <td>
-                            <%= l(day.worked_on, format: :short1) %>
-                          </td>
+                          <td><%= l(day.worked_on, format: :short1) %></td>
                           <td>
                             <% if day.worked_on.wday == 0 %>
                               <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
@@ -107,7 +105,7 @@
       <% end %>
     </td>
     <td>
-      <% if @user.id == current_user.id %>
+      <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
         <% if day.worked_on == Date.today && day.started_at.nil? %>
           <!--user_attendances_path →　attendances#create createする-->
@@ -130,7 +128,7 @@
       <% end %>
     </td>
     <td>
-      <% if @user.id == current_user.id %>
+      <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
         <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
           <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
@@ -173,11 +171,13 @@
         <% if day.tomorrow_check_over == true %>
           <% hour = overtime_result(@user.designated_work_end_time.to_time.hour, day.job_end_time.floor_to(15.minutes).to_time.hour) %>
           <% min = overtime_result(@user.designated_work_end_time.to_time.min, day.job_end_time.floor_to(15.minutes).to_time.min) %>
-          <%= hour + (min/60.0) + 24 %> h
+          <% time = hour + (min/60.0) + 24 %>
+          <%= format("%.2f", time) %> h
         <% else %>
           <% hour = overtime_result(@user.designated_work_end_time.to_time.hour, day.job_end_time.floor_to(15.minutes).to_time.hour) %>
           <% min = overtime_result(@user.designated_work_end_time.to_time.min, day.job_end_time.floor_to(15.minutes).to_time.min) %>
-          <%= hour + (min/60.0) %> h
+          <% time = hour + (min/60.0) %>
+          <%= format("%.2f", time) %> h
         <% end %>
       <% end %>
     </td>

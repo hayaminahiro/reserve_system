@@ -1,33 +1,30 @@
 <!--１ヶ月申請が１件以上、かつ現在ログイン中Userの場合-->
 <% if @month_count > 0 && current_user?(@user) %>
-  <%= link_to "【所属長承認申請のお知らせ】", month_approval_path(@user), remote: true, :style=>"color:red;" %>
-  <font color="red"><%= @month_count %>件の通知があります</font>
+  <p class="notice">【所属長承認申請のお知らせ】<%= link_to "#{@month_count}件の通知があります", month_approval_path(@user), remote: true, class: "notice_radius" %></p>
 <% else %>
-  <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true %>
+  <p class="notice_black">【所属長承認申請のお知らせ】</p>
 <% end %>
 <!--所属長申請モーダルウインドウ表示-->
 <div id="month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-</br>
 
 <!--勤怠変更申請が１件以上、かつ現在ログイン中Userの場合-->
 <% if @attendance_change_count > 0 && current_user?(@user)  %>
-  <%= link_to "【勤怠変更申請のお知らせ】", attendance_approval_path(@user), remote: true, :style=>"color:red;" %>
-  <font color="red"><%= @attendance_change_count %>件の通知があります</font>
+  <p class="notice">【勤怠変更申請のお知らせ】<%= link_to "#{@attendance_change_count}件の通知があります", attendance_approval_path(@user), remote: true, class: "notice_radius" %></p>
 <% else %>
-  <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true %>
+  <p class="notice_black">【勤怠変更申請のお知らせ】</p>
 <% end %>
 <!--勤怠変更申請モーダルウインドウ表示-->
 <div id="attendance_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-</br>
 
 <!--勤怠変更申請が１件以上、かつ現在ログイン中Userの場合-->
 <% if @overtime_count > 0 && current_user?(@user)  %>
-  <%= link_to "【残業申請のお知らせ】", overtime_approval_path(@user), remote: true, :style=>"color:red;" %>
-  <font color="red"><%= @overtime_count %>件の通知があります</font>
+  <p class="notice">
+    【残業申請のお知らせ】
+    <%= link_to "#{@overtime_count}件の通知があります", overtime_approval_path(@user), remote: true, class: "notice_radius" %>
+  </p>
 <% else %>
-  <%= link_to "【残業申請のお知らせ】", "#", remote: true %>
+  <p class="notice_black">【残業申請のお知らせ】</p>
 <% end %>
-
 <!--残業申請モーダルウインドウ表示-->
 <div id="overtime_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 

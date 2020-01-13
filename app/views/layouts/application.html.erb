@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!--      Q1--->
     <title><%= full_title(yield(:title)) %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <!--    Q2--->
     <%= render 'layouts/shim' %>
   </head>
-
   <body>
-    <!--    Q2--->
     <%= render 'layouts/header' %>
     <div class="container">
       <% flash.each do |message_type, message| %>
@@ -24,15 +19,3 @@
     </div>
   </body>
 </html>
-
-<!--      Q1--->
-<!--<title><%#= full_title(yield(:title)) %></title>-->
-<!--yieldの意味は産出する、産み出す。<%# provide(:title, "Top") %>-->
-<!--例えば他のViewで上記のようなコードがあったとする。provideの意味は提供する。-->
-<!--つまりtitleに"Top"が関連付けされて提供され、それを全体Viewでyieldメソッドを使用して呼び出しています。-->
-
-<!--    Q2--->
-<%#= render 'layouts/shim' %><%#= render 'layouts/header' %>
-<!--これはパーシャルと呼ばれるもの。render 'layouts/shimと記述することで、-->
-<!--layoutsファイル内にあるshimファイルを呼び出す事ができます。-->
-<!--ちなみに呼び出し先のファイルには _...を付ける事が命名規則です。-->

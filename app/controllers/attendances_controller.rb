@@ -2,7 +2,8 @@ class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit, :update, :update_month, :month_approval, :attendance_approval,
                                   :overtime_application, :update_approval, :update_applicability, :attendance_log,
                                   :update_overtime, :overtime_approval, :update_overtime_approval]
-  before_action :url_confirmation_attendances_edit_page, only: :edit
+  before_action :url_attendances_edit, only: :edit
+  before_action :url_admin_attendances_edit, only: :edit
   
   def create
     # ルーティングを確認すると、/users/:user_id/attendances → paramsでuser_idを受け取る
@@ -170,6 +171,7 @@ class AttendancesController < ApplicationController
   end
 
   private
+
     # 勤怠変更申請
     def attendances_params
       # :attendancesがキーのハッシュの中にネストされたidと各カラムの値があるハッシュ
@@ -209,15 +211,21 @@ class AttendancesController < ApplicationController
     def set_user
       @user = User.find(params[:id])
     end
-    
-    def url_confirmation_attendances_edit_page
-      @user = User.find(params[:id])
-      @attendance = Attendance.find_by(params[:user_id])
-      if not current_user.admin?
-        unless @user.id == current_user.id
-          flash[:danger] = "自分以外のユーザー情報の閲覧・編集はできません。"
+
+    # 自分以外の勤怠編集ページへのアクセス拒否
+    def url_attendances_edit
+      unless @user.id == current_user.id
+        redirect_to root_url
+      end
+    end
+
+    # 管理者自身の編集ページへのアクセス拒否
+    def url_admin_attendances_edit
+      if current_user.admin?
+        if @user.id == 1
           redirect_to root_url
         end
       end
     end
+
 end
