@@ -15,22 +15,22 @@
           <% end %>
           <!--承認 && チェックON-->
           <% if day.month_approval == "承認" && day.month_check == true %>
-        　　<label for="select1a">所属長承認 <%= superior_name %>から承認済</label>
+            <font color="#4169e1"><p>所属長承認【承認済】: <%= superior_name %></p></font>
           <!--否認 && チェックON-->
           <% elsif day.month_approval == "否認" && day.month_check == true %>
-            <label for="select1a">所属長承認 <%= superior_name %>から否認</label>
+            <font color="#db7093"><p>所属長承認【否認】: <%= superior_name %></p></font>
           <!--申請中-->
           <% elsif day.superior_id.present? %>
-            <label for="select1a">所属長承認 <%= superior_name %>へ申請中</label>
+            <label for="select1a" style="font-size: 15px">所属長承認【申請中】: <%= superior_name %></label>
           <!--その他、未申請時-->
           <% else %>
-            <label for="select1a">所属長承認 未</label>
+            <label for="select1a" style="font-size: 15px">所属長承認 未</label>
           <% end %>
           <!--申請後、申請先ユーザーとメッセージ表示、申請ボタンにて値がリセットされる-->
           <% if @user.id == current_user.id %>
             <!--一つ目id: value, 二つ目name: 表示用-->
             <!--申請先上長のid(superior_id)を選択-->
-            <%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control input-sm"} %>
+            <%= af.collection_select :superior_id, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %>
             <!--申請月の@first_dayを自動で渡す-->
             <%= af.hidden_field :apply_month, :value => @first_day %>
             <!--裏側でmonth_approval == "申請中"を渡したい-->
@@ -47,7 +47,7 @@
   <% end %>
   <div class="btn-attendances-center">
     <% if @user.id == current_user.id %>
-      <%= f.submit "申請", class: "btn btn-primary btn-sm" %>
+      <%= f.submit "申請", class: "btn btn-primary" %>
     <% end %>
   </div>
 <% end %>
