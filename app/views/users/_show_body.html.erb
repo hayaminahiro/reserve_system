@@ -137,17 +137,17 @@
     </td>
     <td> <!--在社時間-->
       <% if day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" %>
-        <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+        <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h
         <!--非表示だが下記で在社時刻を計算-->
         <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
         <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
         <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
         <% @total_seconds = @total_seconds.to_i + seconds %>
-      <% end %> </br>
+      <% end %>
       <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %> <!--通常の編集後在社時間-->
-        <font color="#4169e1">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+        <font color="#4169e1">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</font>
       <% elsif day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == true %> <!--翌日チェック有の編集後在社時間-->
-        <font color="#4169e1">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+        <font color="#4169e1">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</font>
       <% end %>
     </td>
     <td>
@@ -203,7 +203,7 @@
         <font color="#db7093"><p>勤怠編集【否認】: <%= superior_name_at %></p></font>
       <% end %>
       <!--勤怠変更申請中である事を表示-->
-      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "申請中" %>
+      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "申請中" && day.superior_id_at.present? %>
         <label for="select1a" style="font-size: 15px">勤怠編集【申請中】: <%= superior_name_at %></label>
       <% end %><br>
       <!--残業申請：上長名を定義-->

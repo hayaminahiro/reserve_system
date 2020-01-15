@@ -36,7 +36,7 @@
                       <% if current_user.id == user.id %>
                         <td><%= l(at.worked_on, format: :default2) %></td>
                         <td><%= l(at.started_at.floor_to(15.minutes), format: :time) if at.started_at.present?  %></td>
-                        <td><%= l(at.finished_at.floor_to(15.minutes), format: :time) if at.started_at.present? %></td>
+                        <td><%= l(at.finished_at.floor_to(15.minutes), format: :time) if at.finished_at.present? %></td>
                         <td><%= l(at.change_started.floor_to(15.minutes), format: :time) %></td>
                         <td><%= l(at.change_finished.floor_to(15.minutes), format: :time) %></td>
                         <td>

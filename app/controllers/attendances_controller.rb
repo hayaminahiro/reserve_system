@@ -12,18 +12,20 @@ class AttendancesController < ApplicationController
     # @attendanceは、つまり今日を表す
     @attendance = @user.attendances.find_by(worked_on: Date.today)
     # もし今日（@attendance）がnilだったら
-    if @attendance.started_at.nil?
+    if @attendance.started_at.nil? && @attendance.change_started.nil?
       # current_time → 現在時刻を表す / attendance_helper.rb参照
       # @attendanceのstarted_atカラムを現在時刻として更新
-      @attendance.update_attributes(started_at: current_time)
+      @attendance.update_attributes(started_at: current_time.floor_to(15.minutes))
+      @attendance.update_attributes(change_started: current_time.floor_to(15.minutes))
       flash[:info] = "おはようございます。"
       # started_atに値が存在していて、finished_atがnilだった場合
-    elsif @attendance.finished_at.nil?
+    elsif @attendance.finished_at.nil? && @attendance.change_finished.nil?
       # finished_atカラムを現在時刻として@attendanceを更新
-      @attendance.update_attributes(finished_at: current_time)
+      @attendance.update_attributes(finished_at: current_time.floor_to(15.minutes))
+      @attendance.update_attributes(change_finished: current_time.floor_to(15.minutes))
       flash[:info] = "お疲れ様でした。"
     else
-      flash[:danger] = "トラブルがあり登録できませんでした。"
+      flash[:danger] = "勤怠編集終了後はボタン押下できません。"
     end
     redirect_to @user
   end
