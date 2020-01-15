@@ -2,7 +2,7 @@
   <tr>
     <td>
       <% if @user.id == current_user.id || current_user.admin %>
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal<%= day.id %>">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal<%= day.id %>" style="margin: 2px">
           残業申請
         </button>
         <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
@@ -19,40 +19,40 @@
                   </div>
                   <div class="modal-body">
                     <table class="table table-bordered">
-                      <thead style="background: #F7F7F7">
-                      <tr>
-                        <th class="title-position">日付</th>
-                        <th class="title-position">曜日</th>
-                        <th class="title-position">終了予定時間</th>
-                        <th class="title-position">翌日</th>
-                        <th class="title-position">業務処理内容</th>
-                        <th class="title-position">指示者確認㊞</th>
-                      </tr>
+                      <thead class="thead_color">
+                        <tr>
+                          <th class="title-position">日付</th>
+                          <th class="title-position">曜日</th>
+                          <th class="title-position">終了予定時間</th>
+                          <th class="title-position">翌日</th>
+                          <th class="title-position">業務処理内容</th>
+                          <th class="title-position">指示者確認㊞</th>
+                        </tr>
                       </thead>
                       <%= f.fields_for "attendances[]", day do |at| %>
                         <tbody>
-                        <tr>
-                          <td><%= l(day.worked_on, format: :short1) %></td>
-                          <td>
-                            <% if day.worked_on.wday == 0 %>
-                              <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
-                            <% elsif day.worked_on.wday == 6 %>
-                              <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
-                            <% else %>
-                              <%= $days_of_the_week[day.worked_on.wday] %>
-                            <% end %>
-                          </td>
-                          <td><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
-                          <td width="45px"><%= at.check_box(:tomorrow_check_over, incude_hidden: false) %></td> <!--翌日チェック-->
-                          <td><%= at.text_field :job_content, class: 'form-control' %></td>
-                          <td><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
-                          <!--申請月の@first_dayを自動で渡す-->
-                          <%= at.hidden_field :apply_month_over, :value => @first_day %>
-                          <!--裏側でovertime_approval == "申請中"を渡したい-->
-                          <%= at.hidden_field :overtime_approval, value: "申請中" %>
-                          <!--裏側でovertime_check == falseにしたい-->
-                          <%= at.hidden_field :overtime_check, :value => false %>
-                        </tr>
+                          <tr>
+                            <td><%= l(day.worked_on, format: :short1) %></td>
+                            <td>
+                              <% if day.worked_on.wday == 0 %>
+                                <div class="sunday"><%= $days_of_the_week[day.worked_on.wday] %></div>
+                              <% elsif day.worked_on.wday == 6 %>
+                                <div class="saturday"><%= $days_of_the_week[day.worked_on.wday] %></div>
+                              <% else %>
+                                <%= $days_of_the_week[day.worked_on.wday] %>
+                              <% end %>
+                            </td>
+                            <td style="padding-top: 16px"><%= at.time_field :job_end_time, class: 'form-control' %></td> <!--終了予定時間-->
+                            <td class="checkbox_width"><%= at.check_box(:tomorrow_check_over, include_hidden: false) %></td> <!--翌日チェック-->
+                            <td style="padding-top: 16px"><%= at.text_field :job_content, class: 'form-control' %></td>
+                            <td style="padding-top: 16px"><%= at.collection_select :superior_id_over, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+                            <!--申請月の@first_dayを自動で渡す-->
+                            <%= at.hidden_field :apply_month_over, :value => @first_day %>
+                            <!--裏側でovertime_approval == "申請中"を渡したい-->
+                            <%= at.hidden_field :overtime_approval, value: "申請中" %>
+                            <!--裏側でovertime_check == falseにしたい-->
+                            <%= at.hidden_field :overtime_check, :value => false %>
+                          </tr>
                         </tbody>
                       <% end %>
                     </table>
@@ -83,9 +83,9 @@
     <td>
       <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
       <% if day.worked_on.wday == 0 %>
-        <font color="red"><%= $days_of_the_week[day.worked_on.wday] %></font>
+        <div class="sunday"><%= $days_of_the_week[day.worked_on.wday] %></div>
       <% elsif day.worked_on.wday == 6 %>
-        <font color="blue"><%= $days_of_the_week[day.worked_on.wday] %></font>
+        <div class="saturday"><%= $days_of_the_week[day.worked_on.wday] %></div>
       <% else %>
         <%= $days_of_the_week[day.worked_on.wday] %>
       <% end %>
@@ -109,7 +109,7 @@
         <!--もし日付==本日で、かつ出社時間がnilの場合、出社ボタンを表示-->
         <% if day.worked_on == Date.today && day.started_at.nil? %>
           <!--user_attendances_path →　attendances#create createする-->
-          <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <%= button_to "出社", user_attendances_path(@user), class: "btn btn-primary" %>
         <% end %>
       <% end %>
     </td>
@@ -131,23 +131,23 @@
       <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
         <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
-          <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary btn-sm" %>
+          <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary" %>
         <% end %>
       <% end %>
     </td>
     <td> <!--在社時間-->
       <% if day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" %>
-        <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+        <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h
         <!--非表示だが下記で在社時刻を計算-->
         <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
         <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
         <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
         <% @total_seconds = @total_seconds.to_i + seconds %>
-      <% end %> </br>
+      <% end %>
       <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == false %> <!--通常の編集後在社時間-->
-        <font color="#4169e1">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+        <div class="success_color">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
       <% elsif day.change_started.present? && day.change_finished.present? && day.attendance_approval == "承認" && day.tomorrow_check == true %> <!--翌日チェック有の編集後在社時間-->
-        <font color="#4169e1">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %></font>
+        <div class="success_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
       <% end %>
     </td>
     <td>
@@ -156,17 +156,17 @@
       <% end %>
     </td>
     <td style="padding-right: 18px;">
-      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
+      <% if day.job_end_time.present? %>
         　<%= l(day.job_end_time, format: :hour) %>
       <% end %>
     </td>
     <td style="padding-right: 18px;">
-      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
+      <% if day.job_end_time.present? %>
         　<%= l(day.job_end_time.floor_to(15.minutes), format: :min) %>
       <% end %>
     </td>
     <td>
-      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
+      <% if day.job_end_time.present? %>
         <!--job_end_time(終了予定時間) - designated_work_end_time（指定勤務終了時間)-->
         <% if day.tomorrow_check_over == true %>
           <% hour = overtime_result(@user.designated_work_end_time.to_time.hour, day.job_end_time.floor_to(15.minutes).to_time.hour) %>
@@ -182,7 +182,7 @@
       <% end %>
     </td>
     <td>
-      <% if day.job_end_time.present? && day.overtime_approval == "承認" %>
+      <% if day.job_end_time.present? %>
         <%= day.job_content %>
       <% end %>
     </td>
@@ -198,13 +198,13 @@
       <% end %>
       <!--勤怠編集承認・否認結果表示-->
       <% if day.attendance_approval == "承認" %>
-        <font color="#4169e1"><p><%= superior_name_at %>： 勤怠編集承認済</p></font>
+        <font color="#4169e1"><p>勤怠編集【承認済】: <%= superior_name_at %></p></font>
       <% elsif day.attendance_approval == "否認" %>
-        <font color="#db7093"><p><%= superior_name_at %>： 勤怠編集否認</p></font>
+        <font color="#db7093"><p>勤怠編集【否認】: <%= superior_name_at %></p></font>
       <% end %>
       <!--勤怠変更申請中である事を表示-->
-      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "申請中" %>
-        <label for="select1a">勤怠変更： <%= superior_name_at %>へ申請中</label>
+      <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "申請中" && day.superior_id_at.present? %>
+        <label for="select1a" style="font-size: 15px">勤怠編集【申請中】: <%= superior_name_at %></label>
       <% end %><br>
       <!--残業申請：上長名を定義-->
       <% superior_name_over = "" %>
@@ -217,13 +217,13 @@
       <% end %>
       <!--残業申請承認・否認結果表示-->
       <% if day.overtime_approval == "承認" %>
-        <font color="#4169e1"><p><%= superior_name_over %>： 残業承認済</p></font>
+        <font color="#4169e1"><p>残業申請【承認済】: <%= superior_name_over %></p></font>
       <% elsif day.overtime_approval == "否認" %>
-        <font color="#db7093"><p><%= superior_name_over %>： 残業否認</p></font>
+        <font color="#db7093"><p>残業申請【否認】: <%= superior_name_over %></p></font>
       <% end %>
       <!--残業申請中である事を表示-->
       <% if day.job_end_time.present? && day.overtime_approval == "申請中" %>
-        <label for="select1a">残業申請： <%= superior_name_over %>へ申請中</label>
+        <label for="select1a" style="font-size: 15px">残業申請【申請中】: <%= superior_name_over %></label>
       <% end %>
     </td>
   </tr>

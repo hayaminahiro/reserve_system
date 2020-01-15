@@ -1,6 +1,6 @@
 <!--ページ遷移する勤怠ログ：コメントアウト解除すれば復活可-->
 <%#= link_to "勤怠修正ログ(承認済み)", attendance_log_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
-<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
   勤怠修正ログ(承認済み)
 </button>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -36,7 +36,7 @@
                       <% if current_user.id == user.id %>
                         <td><%= l(at.worked_on, format: :default2) %></td>
                         <td><%= l(at.started_at.floor_to(15.minutes), format: :time) if at.started_at.present?  %></td>
-                        <td><%= l(at.finished_at.floor_to(15.minutes), format: :time) if at.started_at.present? %></td>
+                        <td><%= l(at.finished_at.floor_to(15.minutes), format: :time) if at.finished_at.present? %></td>
                         <td><%= l(at.change_started.floor_to(15.minutes), format: :time) %></td>
                         <td><%= l(at.change_finished.floor_to(15.minutes), format: :time) %></td>
                         <td>

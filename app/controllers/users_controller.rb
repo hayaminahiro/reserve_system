@@ -20,10 +20,16 @@ class UsersController < ApplicationController
   end
   
   def import
+    @users = User.all
     # fileはtmpに自動で一時保存される
-    User.import(params[:file])
-    flash[:success] = "ユーザー情報をCSVインポートしました。"
-    redirect_to users_url
+    if params[:file].present?
+      User.import(params[:file])
+      flash[:success] = "ユーザー情報をCSVインポートしました。"
+      redirect_to users_url
+    elsif params[:file].nil?
+      flash[:danger] = "ユーザー情報のCSVインポートに失敗しました。"
+      render :index
+    end
   end
   
   def edit_personal_info
