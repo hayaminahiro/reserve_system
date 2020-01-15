@@ -390,12 +390,40 @@ a.notice_radius {
   text-align: left;
 }
 
+//申請成功color
+.success_color {
+  color: #4169e1;
+}
 
+//申請前color
+.danger_color {
+  color: #db7093;
+}
 
+.saturday {
+  color: royalblue;
+}
 
+.sunday {
+  color: crimson;
+}
 
+.checkbox_width {
+  width: 45px;
+}
 
+.thead_color {
+  background: #F7F7F7;
+}
 
+.label_font {
+  font-size: 15px;
+}
 
+.user_font {
+  font-size: 18px;
+}
 
-
+#head_user_color {
+  color: #ff1493;
+}

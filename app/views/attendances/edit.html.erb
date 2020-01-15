@@ -25,47 +25,47 @@
                 <% %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
                 <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
                 <% if day.worked_on.wday == 0 %>
-                  <font color="red"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+                  <div class="sunday"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></div>
                 <% elsif day.worked_on.wday == 6 %>
-                  <font color="blue"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+                  <div class="saturday"><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></div>
                 <% else %>
-                  <font><%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %></font>
+                  <%= %w{日 月 火 水 木 金 土}[day.worked_on.wday] %>
                 <% end %>
               </td>
               <!--未来の勤怠情報の編集はできない-->
               <!--if !current_user.admin? && ⇨ 仕様書テストNO,22に基づき削除-->
               <% if Date.current < day.worked_on %>
-                <td style="padding-top: 16px"><%= af.time_field :change_started, readonly: true, class: 'form-control' %></td>
-                <td style="padding-top: 16px"><%= af.time_field :change_finished, readonly: true, class: 'form-control' %></td>
+                <td><%= af.time_field :change_started, readonly: true, class: 'form-control' %></td>
+                <td><%= af.time_field :change_finished, readonly: true, class: 'form-control' %></td>
               <% else %>
                 <td style="padding-top: 16px">
                   <%= af.time_field :change_started, class: 'form-control' %>
                   <!--判断材料として変更前の出勤記録も表示-->
-                  <font color="#db7093" style="padding: 0"><%= l(day.started_at.floor_to(15.minutes), format: :time) if day.started_at.present? %></font>
+                  <div class="danger_color"><%= l(day.started_at.floor_to(15.minutes), format: :time) if day.started_at.present? %></div>
                 </td>
                 <td style="padding-top: 16px">
                   <%= af.time_field :change_finished, class: 'form-control' %>
                   <!--判断材料として変更前の退勤記録も表示-->
-                  <font color="#db7093"><%= l(day.finished_at.floor_to(15.minutes), format: :time) if day.finished_at.present? %></font>
+                  <div class="danger_color"><%= l(day.finished_at.floor_to(15.minutes), format: :time) if day.finished_at.present? %></div>
                 </td>
               <% end %>
-              <td width="40">
+              <td class="checkbox_width">
                 <%= af.check_box :tomorrow_check, :as => :boolean %></td>
               <td>
                 <!--変更後の在社時間-->
                 <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %>
-                  <font color="#4169e1">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</font>
+                  <div class="success_color">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %>
-                  <font color="#4169e1">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</font>
+                  <div class="danger_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% end %>
-                </br>
+                <br>
                 <!--在社時間-->
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  <font color="#db7093">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h</font>
+                  <div class="danger_color">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h</div>
                 <% end %>
               </td>
-              <td><%= af.text_field :note, class: 'form-control' %></td>
-              <td><%= af.collection_select :superior_id_at, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
+              <td style="padding-top: 16px"><%= af.text_field :note, class: 'form-control' %></td>
+              <td style="padding-top: 16px"><%= af.collection_select :superior_id_at, @users, :id, :name, {include_blank: true, selected: nil}, {class: "form-control"} %></td>
               <!--裏側でattendance_approval == "申請中"を渡したい-->
               <%= af.hidden_field :attendance_approval, value: "申請中" %>
               <!--裏側でattendance_check == falseにしたい-->

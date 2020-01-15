@@ -3,7 +3,7 @@
     <%= link_to "勤怠システム", root_path, id: "logo" %>
       <div class="header_name_color">
         <% if logged_in? && current_user?(@user) %>
-          <font color="#ff1493"><%= @user.name %></font>
+          <div id="head_user_color"><%= @user.name %></div>
         <% end %>
       </div>
       <ul class="nav navbar-nav navbar-right">

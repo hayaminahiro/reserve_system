@@ -15,16 +15,16 @@
           <% end %>
           <!--承認 && チェックON-->
           <% if day.month_approval == "承認" && day.month_check == true %>
-            <font color="#4169e1"><p>所属長承認【承認済】: <%= superior_name %></p></font>
+            <div class="success_color"><p>所属長承認【承認済】: <%= superior_name %></p></div>
           <!--否認 && チェックON-->
           <% elsif day.month_approval == "否認" && day.month_check == true %>
-            <font color="#db7093"><p>所属長承認【否認】: <%= superior_name %></p></font>
+            <div class="danger_color"><p>所属長承認【否認】: <%= superior_name %></p></div>
           <!--申請中-->
           <% elsif day.superior_id.present? %>
-            <label for="select1a" style="font-size: 15px">所属長承認【申請中】: <%= superior_name %></label>
+            <label for="select1a" class="label_font">所属長承認【申請中】: <%= superior_name %></label>
           <!--その他、未申請時-->
           <% else %>
-            <label for="select1a" style="font-size: 15px">所属長承認 未</label>
+            <label for="select1a" class="label_font">所属長承認 未</label>
           <% end %>
           <!--申請後、申請先ユーザーとメッセージ表示、申請ボタンにて値がリセットされる-->
           <% if @user.id == current_user.id %>

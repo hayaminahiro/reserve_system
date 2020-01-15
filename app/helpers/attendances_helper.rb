@@ -119,11 +119,11 @@ module AttendancesHelper
     apply
   end
 
-  # 残業申請：終了予定時間と上長が選択されているかチェック
+  # 残業申請：終了予定時間と業務処理内容と上長が選択されているかチェック
   def overtime_value_present?
     overtime = true
     update_overtime_params.each do |id, item|
-      if item[:job_end_time].blank? || item[:superior_id_over].blank?
+      if item[:job_end_time].blank? || item[:job_content].blank? || item[:superior_id_over].blank?
         overtime = false
       else
         overtime = true

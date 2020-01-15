@@ -15,7 +15,7 @@
                 <% if at.superior_id_over == current_user.id %>
                   <% if at.overtime_check == false %>
                     <h4 class="modal-title">【<%= user.name %>からの残業申請】</h4>
-                      <thead style="background: #F7F7F7">
+                      <thead class="thead_color">
                         <tr>
                           <th class="title-position">日付</th>
                           <th class="title-position">曜日</th>
@@ -44,9 +44,9 @@
                             <% $days_of_the_week[at.worked_on.wday] %>
                             <!--if文でwdayが0か6（土か日曜日）だったらの時の処理-->
                             <% if at.worked_on.wday == 0 %>
-                              <font color="red"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                              <div class="sunday"><%= $days_of_the_week[at.worked_on.wday] %></div>
                             <% elsif at.worked_on.wday == 6 %>
-                              <font color="blue"><%= $days_of_the_week[at.worked_on.wday] %></font>
+                              <div class="saturday"><%= $days_of_the_week[at.worked_on.wday] %></div>
                             <% else %>
                               <%= $days_of_the_week[at.worked_on.wday] %>
                             <% end %>
@@ -67,10 +67,10 @@
                             <% end %>
                           </td>
                           <td><%= at.job_content %></td>
-                          <td>
+                          <td style="padding-top: 16px;">
                             <%= af.select :overtime_approval, Attendance.overtime_approvals.keys.to_a, {}, { class: "form-control" } %>
                           </td>
-                          <td width="45px">
+                          <td>
                             <%= af.check_box :overtime_check, include_hidden: false %>
                           </td>
                           <td>

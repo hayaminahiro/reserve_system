@@ -38,10 +38,10 @@
                         <tbody>
                           <tr>
                             <td><%= l(at.apply_month, format: :month) %></td>
-                            <td class="select-approval">
+                            <td style="padding-top: 16px">
                               <%= af.select :month_approval, Attendance.month_approvals.keys.to_a, {}, { class: "form-control" } %>
                             </td>
-                            <td width="45px">
+                            <td class="checkbox_width">
                               <%= af.check_box :month_check, include_hidden: false %>
                             </td>
                             <td>

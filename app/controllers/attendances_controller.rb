@@ -142,16 +142,16 @@ class AttendancesController < ApplicationController
 
   # 残業申請モーダルからUPDATE
   def update_overtime
-    if overtime_range_invalid? && overtime_value_present? # 申請時間と上長が選択されているかチェック
+    # 残業申請時間が勤務時間内かをチェック && 申請時間と業務処理内容と上長が選択されているかチェック
+    if overtime_range_invalid? && overtime_value_present?
       update_overtime_params.each do |id, item|
-        # 残業申請時間が勤務時間内かをチェックする
         attendance = Attendance.find(id)
         attendance.update_attributes(item)
       end
       flash[:success] = "残業申請しました。"
       redirect_to user_path(@user)
     else
-      flash[:danger] = "1. 指定勤務終了時間内の申請はできません。2. 申請先が選択されているか確認して下さい。"
+      flash[:danger] = "1. 指定勤務終了時間内の申請はできません。2. 業務処理内容と指示者確認㊞が入力されているか確認して下さい。"
       redirect_to user_path(@user)
     end
   end
