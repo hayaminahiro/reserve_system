@@ -51,6 +51,8 @@ class AttendancesController < ApplicationController
       end
       flash[:success] = "勤怠情報を申請しました。申請できていない場合は申請先上長が選択されているか確認して下さい。"
       redirect_to user_url(@user, params:{first_day: params[:date]})
+
+
     else
       flash[:danger] = "不正な時間入力がありました。再入力して下さい。出社時間と退社時間はセットで入力されていますか？"
       redirect_to edit_attendances_path(@user, params[:date])
