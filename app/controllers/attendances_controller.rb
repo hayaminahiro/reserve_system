@@ -25,7 +25,7 @@ class AttendancesController < ApplicationController
       @attendance.update_attributes(change_finished: current_time.floor_to(15.minutes))
       flash[:info] = "お疲れ様でした。"
     else
-      flash[:danger] = "勤怠編集終了後はボタン押下できません。"
+      flash[:danger] = "トラブルがあり実行できませんでした。"
     end
     redirect_to @user
   end
