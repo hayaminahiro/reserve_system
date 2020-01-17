@@ -44,17 +44,15 @@ class AttendancesController < ApplicationController
   def update
     if attendances_invalid?
       attendances_params.each do |id, item|
-        if attendance_superior_present?(item[:superior_id_at], item[:change_started], item[:change_finished] )
+        if attendance_superior_present?(item[:superior_id_at], item[:change_started], item[:change_finished])
           attendance = Attendance.find(id)
           attendance.update_attributes(item)
         end
       end
-      flash[:success] = "勤怠情報を申請しました。申請できていない場合は申請先上長が選択されているか確認して下さい。"
+      flash[:success] = "勤怠情報を申請しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
       redirect_to user_url(@user, params:{first_day: params[:date]})
-
-
     else
-      flash[:danger] = "不正な時間入力がありました。再入力して下さい。出社時間と退社時間はセットで入力されていますか？"
+      flash[:danger] = "不正な時間入力がありました。出社時間と退社時間はセットで入力されているか確認して下さい。"
       redirect_to edit_attendances_path(@user, params[:date])
     end
   end

@@ -56,7 +56,7 @@
                 <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %>
                   <div class="success_color">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %>
-                  <div class="danger_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
+                  <div class="success_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% end %>
                 <br>
                 <!--在社時間-->
