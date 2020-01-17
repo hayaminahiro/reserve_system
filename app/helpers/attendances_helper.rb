@@ -53,10 +53,10 @@ module AttendancesHelper
   def attendances_invalid?
     attendances = true #不正な値がない状態でスタート → true
     attendances_params.each do |id, item|
-      # ①出勤時間と退勤h時間が空白の場合、nextで次の繰り返し処理が続行
+      # ①出勤時間と退勤時間が空白の場合、nextで次の繰り返し処理が続行
       if item[:change_started].blank? && item[:change_finished].blank?
         next
-      elsif item[:tomorrow_check] == "1"
+      elsif item[:tomorrow_check] == "1" && item[:change_started].present? && item[:change_finished].present?
         next
       # ②出勤時間が空白、または退勤時間が空白の場合 → 繰り返し処理を終了しfalseを返す
       elsif item[:change_started].blank? || item[:change_finished].blank?
