@@ -130,7 +130,7 @@
     <td>
       <% if @user.id == current_user.id || current_user.admin %>
         <!--もし日付が今日で、かつ出社時間が存在し、かつ退社時間nilだったら-->
-        <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? %>
+        <% if day.worked_on == Date.today && day.started_at.present? && day.finished_at.nil? && day.change_finished.nil? %>
           <%= button_to "退社", user_attendances_path(@user), class: "btn btn-primary" %>
         <% end %>
       <% end %>
