@@ -136,8 +136,15 @@
       <% end %>
     </td>
     <td> <!--在社時間-->
-      <% if day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" %>
+      <% if day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" && day.tomorrow_check == false %>
         <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h
+        <!--非表示だが下記で在社時刻を計算-->
+        <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
+        <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
+        <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
+        <% @total_seconds = @total_seconds.to_i + seconds %>
+      <% elsif day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" && day.tomorrow_check == true %>
+        <%= tomorrow_check_working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h
         <!--非表示だが下記で在社時刻を計算-->
         <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
         <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
@@ -150,8 +157,8 @@
         <div class="success_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
       <% end %>
     </td>
-    <td>
-      <% if day.change_finished.present? && day.attendance_approval == "承認" %>
+    <td> <!--started_at(finished_at)は実際に出勤(退勤)するか、モーダル側の申請で承認されないと得る事ができない値。つまり初期のただの申請ではnilとなり、承認されると値が入る-->
+      <% if day.started_at.present? && day.finished_at.present? %>
         <%= day.note %>
       <% end %>
     </td>

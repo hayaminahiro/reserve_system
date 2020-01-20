@@ -36,7 +36,6 @@ class AttendancesController < ApplicationController
     @last_day = @first_day.end_of_month
     @dates = user_attendances_month_date
     # 自分以外の上長
-    #@users = User.where(admin: false).applied_superior_at(superior_id_at: current_user.id)
     @users = User.where(admin: false).where(superior: true).where.not(id: current_user.id)
   end
 
@@ -59,6 +58,7 @@ class AttendancesController < ApplicationController
 
   # 勤怠変更申請表示モーダル
   def attendance_approval
+    @start_time = params[:change_started]
     @users = User.applied_superior_at(superior_id_at: current_user.id)
     @first_day = first_day(params[:first_day]) # attendance_helper.rb参照
     @last_day = @first_day.end_of_month # end_od_monthは当月の終日を表す
@@ -78,8 +78,15 @@ class AttendancesController < ApplicationController
       if attendance_change_invalid?(item[:attendance_approval], item[:attendance_check]) # 処理がtrueになったら更新
         # eachで回ってきた該当するidのAttendanceオブジェクトをattendanceに代入
         attendance = Attendance.find(id)
-        attendance.update_attributes(item)
+        if item[:attendance_approval] == "否認"
+          attendance.update_attributes(attendance_approval: "否認", attendance_check: "1")
+        #elsif item[:attendance_approval] == "承認"
+        #  attendance.update_attributes(attendance_approval: "承認", attendance_check: "1")
+        else
+          attendance.update_attributes!(item)
+        end
       end
+      #raise
     end
     flash[:success] = "勤怠変更申請返答しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
     redirect_to user_path(@user)
@@ -184,7 +191,7 @@ class AttendancesController < ApplicationController
 
     # 勤怠変更申請モーダル内カラム
     def update_applicability_params
-      params.require(:user).permit(attendances: [:attendance_approval, :attendance_check])[:attendances]
+      params.require(:user).permit(attendances: [:attendance_approval, :attendance_check, :started_at, :finished_at])[:attendances]
     end
 
     # 申請した上長idと申請月

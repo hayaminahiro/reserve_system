@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2019_12_12_133244) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "scheduled_end_time", default: "2020-01-15 19:00:00"
+    t.datetime "scheduled_end_time", default: "2020-01-20 19:00:00"
     t.string "status"
     t.integer "superior_id"
     t.datetime "apply_month"
@@ -63,8 +63,8 @@ ActiveRecord::Schema.define(version: 2019_12_12_133244) do
     t.string "department"
     t.datetime "basic_time", default: "2019-07-01 07:30:00"
     t.datetime "work_time", default: "2019-07-01 08:00:00"
-    t.datetime "designated_work_start_time", default: "2020-01-15 09:00:00"
-    t.datetime "designated_work_end_time", default: "2020-01-15 18:00:00"
+    t.datetime "designated_work_start_time", default: "2020-01-20 09:00:00"
+    t.datetime "designated_work_end_time", default: "2020-01-20 18:00:00"
     t.integer "employee_number"
     t.string "uid"
     t.string "affiliation"

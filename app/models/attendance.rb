@@ -10,7 +10,7 @@ class Attendance < ApplicationRecord
   validate :finished_at_is_invalid_without_started_at
   
   # 退社時間を保存する時、出社時間より早い時間の場合は無効
-  validate :invalid_started_at_is_faster_than_finished_at
+  #validate :invalid_started_at_is_faster_than_finished_at
   
   # 出社時間が無ければ退社時間は無効
   def finished_at_is_invalid_without_started_at
@@ -18,11 +18,14 @@ class Attendance < ApplicationRecord
   end
   
   # 退社時間を保存する時、出社時間より早い時間の場合は無効
-  def invalid_started_at_is_faster_than_finished_at
-    if started_at.present? && finished_at.present?
-      errors.add(:started_at, "より早い退勤時刻は無効です。") if started_at > finished_at
-    end
-  end
+  # started_at > finished_atになる事はまずない。
+  # 理由は勤怠編集ページで扱うカラムはchange_〇〇。実際の出退勤ボタン押下時も上記条件になる事はまずない。
+  # 翌日チェックの際に、勤怠編集モーダルからhidden_fieldで自動で値が送られる際に無駄に引っかかってしまう。
+  #def invalid_started_at_is_faster_than_finished_at
+  #  if started_at.present? && finished_at.present?
+  #    errors.add(:started_at, "より早い退勤時刻は無効です。") if started_at > finished_at
+  #  end
+  #end
 
   # 1ヶ月勤怠申請
   enum month_approval: { "申請中" => 1, "承認" => 2, "否認" => 3, "なし" => 4 }, _suffix: true # 同じenum名定義できる

@@ -88,11 +88,13 @@
                           <%= af.select :attendance_approval, Attendance.attendance_approvals.keys.to_a, {}, { class: "form-control" } %>
                         </td>
                         <td class="checkbox_width">
-                          <%= af.check_box :attendance_check, incude_hidden: false %>
+                          <%= af.check_box :attendance_check, include_hidden: false %>
                         </td>
                         <td>
                           <%= link_to "確認", user_path(id: user.id, first_day: at.apply_month_at ), class: 'btn btn-primary' %>
                         </td>
+                        <%= af.hidden_field :started_at, value: at.change_started.to_time %>
+                        <%= af.hidden_field :finished_at, value: at.change_finished.to_time %>
                       </tr>
                       </tbody>
                     <% end %>
