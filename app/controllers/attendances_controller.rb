@@ -80,8 +80,10 @@ class AttendancesController < ApplicationController
         attendance = Attendance.find(id)
         if item[:attendance_approval] == "否認"
           attendance.update_attributes(attendance_approval: "否認", attendance_check: "1")
+        #elsif item[:attendance_approval] == "承認"
+        #  attendance.update_attributes(attendance_approval: "承認", attendance_check: "1")
         else
-          attendance.update_attributes(item)
+          attendance.update_attributes!(item)
         end
       end
       #raise

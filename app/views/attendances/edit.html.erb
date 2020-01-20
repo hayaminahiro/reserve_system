@@ -52,16 +52,18 @@
               <td class="checkbox_width">
                 <%= af.check_box :tomorrow_check, :as => :boolean %></td>
               <td>
-                <!--変更後の在社時間-->
+                <!--編集後の在社時間-->
                 <% if day.change_started.present? && day.change_finished.present? && day.tomorrow_check == false %>
                   <div class="success_color">編集後 <%= working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% elsif day.change_started.present? && day.change_finished.present? && day.tomorrow_check == true %>
                   <div class="success_color">編集後 <%= tomorrow_check_working_times(day.change_started.floor_to(15.minutes), day.change_finished.floor_to(15.minutes)) %> h</div>
                 <% end %>
                 <br>
-                <!--在社時間-->
-                <% if day.started_at.present? && day.finished_at.present? %>
+                <!--編集前の在社時間-->
+                <% if day.started_at.present? && day.finished_at.present? && day.tomorrow_check == false %>
                   <div class="danger_color">編集前  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h</div>
+                <% elsif day.started_at.present? && day.finished_at.present? && day.tomorrow_check == true %>
+                  <div class="danger_color">編集前  <%= tomorrow_check_working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h</div>
                 <% end %>
               </td>
               <td style="padding-top: 16px"><%= af.text_field :note, class: 'form-control' %></td>
