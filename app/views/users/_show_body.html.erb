@@ -141,7 +141,7 @@
         <!--非表示だが下記で在社時刻を計算-->
         <!--15分単位の退社時刻 ー 15分単位の出社時刻　＝　在社時刻.to_i (秒数で返ってくる)整数へ変更しローカルsecondsへ代入-->
         <% seconds = (day.finished_at.floor_to(15.minutes) - day.started_at.floor_to(15.minutes)).to_i %>
-        <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->
+        <!--出社時間も退社時間も存在していた場合、@total_secondsに足したしたsecond（秒数）を毎回代入する-->''
         <% @total_seconds = @total_seconds.to_i + seconds %>
       <% elsif day.started_at.present? && day.finished_at.present? && day.attendance_approval != "承認" && day.tomorrow_check == true %>
         <%= tomorrow_check_working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> h
@@ -205,9 +205,9 @@
       <% end %>
       <!--勤怠編集承認・否認結果表示-->
       <% if day.attendance_approval == "承認" %>
-        <font color="#4169e1"><p>勤怠編集【承認済】: <%= superior_name_at %></p></font>
+        <div class="success_color"><p>勤怠編集【承認済】: <%= superior_name_at %></p></div>
       <% elsif day.attendance_approval == "否認" %>
-        <font color="#db7093"><p>勤怠編集【否認】: <%= superior_name_at %></p></font>
+        <div class="danger_color"><p>勤怠編集【否認】: <%= superior_name_at %></p></div>
       <% end %>
       <!--勤怠変更申請中である事を表示-->
       <% if day.change_started.present? && day.change_finished.present? && day.attendance_approval == "申請中" && day.superior_id_at.present? %>
@@ -224,9 +224,9 @@
       <% end %>
       <!--残業申請承認・否認結果表示-->
       <% if day.overtime_approval == "承認" %>
-        <font color="#4169e1"><p>残業申請【承認済】: <%= superior_name_over %></p></font>
+        <div class="success_color"><p>残業申請【承認済】: <%= superior_name_over %></p></div>
       <% elsif day.overtime_approval == "否認" %>
-        <font color="#db7093"><p>残業申請【否認】: <%= superior_name_over %></p></font>
+        <div class="danger_color"><p>残業申請【否認】: <%= superior_name_over %></p></div>
       <% end %>
       <!--残業申請中である事を表示-->
       <% if day.job_end_time.present? && day.overtime_approval == "申請中" %>
