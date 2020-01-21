@@ -27,7 +27,7 @@ class UsersController < ApplicationController
       flash[:success] = "ユーザー情報をCSVインポートしました。"
       redirect_to users_url
     elsif params[:file].nil?
-      flash[:danger] = "ユーザー情報のCSVインポートに失敗しました。"
+      flash.now[:danger] = "ユーザー情報のCSVインポートに失敗しました。"
       render :index
     end
   end
