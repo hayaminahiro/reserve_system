@@ -12,7 +12,7 @@
         <% if logged_in? %>
           <% if current_user.admin? %>
             <!--この部分は一般ユーザーに表示しない-->
-            <li><%= link_to "ユーザーー覧", users_path %></li>
+            <li><%= link_to "ユーザーー覧", users_path, data: {"turbolinks" => false} %></li>
             <li><%= link_to "出勤社員一覧", currently_working_users_path %></li>
             <li><%= link_to "拠点情報の修正", bases_path %></li>
             <li><%= link_to "基本情報の修正", basic_info_path(current_user) %></li>
