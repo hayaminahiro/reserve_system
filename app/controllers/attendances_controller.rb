@@ -147,20 +147,17 @@ class AttendancesController < ApplicationController
     @day = Date.parse(params[:day])
   end
 
-  # 残業申請モーダルからUPDATE
   def update_overtime
-    # 残業申請時間が勤務時間内かをチェック && 申請時間と業務処理内容と上長が選択されているかチェック
-    if overtime_range_invalid? && overtime_value_present?
-      update_overtime_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes(item)
+    update_overtime_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(item)
+      if item[:reserve_check] == "true"
+        flash[:success] = "予約確定しました。"
+      else
+        flash[:warning] = "予約キャンセルしました。"
       end
-      flash[:success] = "残業申請しました。"
-      redirect_to user_path(@user)
-    else
-      flash[:danger] = "1. 指定勤務終了時間内の申請はできません。2. 業務処理内容と指示者確認㊞が入力されているか確認して下さい。"
-      redirect_to user_path(@user)
     end
+    redirect_to user_path(@user)
   end
 
   def overtime_approval
@@ -178,6 +175,7 @@ class AttendancesController < ApplicationController
     flash[:success] = "残業申請返答しました。申請できていない場合は必要項目が選択されているか確認して下さい。"
     redirect_to user_path(@user)
   end
+
 
   private
 
@@ -206,8 +204,7 @@ class AttendancesController < ApplicationController
 
     # 残業申請カラム
     def update_overtime_params
-      params.permit(attendances: [:job_end_time, :tomorrow_check_over, :job_content, :superior_id_over,
-                                  :apply_month_over, :overtime_approval, :overtime_check])[:attendances]
+      params.permit(attendances: [:reserve_time, :reserve_check])[:attendances]
     end
 
     # 残業申請承認・否認の更新

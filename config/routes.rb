@@ -44,7 +44,10 @@ Rails.application.routes.draw do
       get 'edit_personal_info'
       patch 'update_personal_info'
     end
-    resources :attendances
+    resources :attendances do
+      get 'reserve'
+      patch 'update_reserve'
+    end
     collection { post :import } # CSVルーティング/collectionルーティングは:idが付与されない→/users/import
   end
   
