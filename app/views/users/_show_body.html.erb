@@ -12,12 +12,11 @@
     </td>
     <td>
       <% if @user.id == current_user.id || current_user.admin %>
-        <% if day.reserve_time.present? %>
+        <% if day.reserve_time == "10:00" %>
           <div><a data-toggle="modal" style="font-size: 20px; color: #666666; text-decoration: none;" data-target="#myModal<%= day.id %>">ー<br><div style="font-size: 8px; padding-top: 0;">予約済み</div></a></div>
         <% else %>
           <div><a data-toggle="modal" style="font-size: 30px; color: #c7254e; text-decoration: none;" data-target="#myModal<%= day.id %>">◎</a></div>
         <% end %>
-
         <% if day.reserve_time.present? %>
           <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
             <!--切り替えボタンの設定 -->
@@ -40,7 +39,6 @@
                           <th class="title-position">ご利用者様名</th>
                           <th class="title-position">ご家族様名</th>
                           <th class="title-position">メールアドレス</th>
-
                         </tr>
                         </thead>
                         <%= f.fields_for "attendances[]", day do |at| %>
@@ -156,10 +154,152 @@
           <% end %>
         <% end %>
       <% end %>
-      <!--残業申請ボタンのモーダルウインドウ表示-->
-      <div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
     </td>
+
     <td>
+      <% if @user.id == current_user.id || current_user.admin %>
+        <% if day.reserve_time == "11:00" %>
+          <div><a data-toggle="modal" style="font-size: 20px; color: #666666; text-decoration: none;" data-target="#myModal<%= day.id %>">ー<br><div style="font-size: 8px; padding-top: 0;">予約済み</div></a></div>
+        <% else %>
+          <div><a data-toggle="modal" style="font-size: 30px; color: #c7254e; text-decoration: none;" data-target="#myModal<%= day.id %>">◎</a></div>
+        <% end %>
+        <% if day.reserve_time.present? %>
+          <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
+            <!--切り替えボタンの設定 -->
+            <div class="modal fade" id="myModal<%= day.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div id="over-modal-position">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">予約フォーム</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" style="padding-top: 20px;">
+                      <table class="table table-bordered">
+                        <thead class="thead_color">
+                        <tr>
+                          <th class="title-position">日付</th>
+                          <th class="title-position">予約時間</th>
+                          <th class="title-position">ご利用者様名</th>
+                          <th class="title-position">ご家族様名</th>
+                          <th class="title-position">メールアドレス</th>
+                        </tr>
+                        </thead>
+                        <%= f.fields_for "attendances[]", day do |at| %>
+                          <tbody>
+                          <tr>
+                            <td>
+                              <% if day.worked_on.wday == 0 %>
+                                <div class="sunday"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% elsif day.worked_on.wday == 6 %>
+                                <div class="saturday"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% else %>
+                                <div class="normal"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% end %>
+                            </td>
+                            <td style="padding-top: 16px; font-size: 20px;">10:00</td>
+                            <%= at.hidden_field :reserve_time, :value => nil %>
+                            <td style="padding-top: 16px; font-size: 20px;"></td>
+                            <td style="padding-top: 16px; font-size: 20px;"><%= current_user.name %></td>
+                            <td style="padding-top: 16px; font-size: 20px;"><%= current_user.email %></td>
+                            <%= at.hidden_field :reserve_check, :value => false %>
+                          </tr>
+                          </tbody>
+                        <% end %>
+                      </table>
+                    </div>
+                    <div id="notice-message">
+                      <p>
+                        <img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />
+                        <% if day.reserve_time.present? %>
+                          予約キャンセル後、登録メールアドレスにキャンセル情報が送信されます。
+                        <% else %>
+                          予約確定後、登録メールアドレスに予約情報が送信されます。
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="over-modal-footer">
+                        <%= f.submit "予約をキャンセルする", class: "btn btn-warning" %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <%= form_with( url: update_overtime_path(@user), local: true, method: :patch) do |f| %>
+            <!--切り替えボタンの設定 -->
+            <div class="modal fade" id="myModal<%= day.id %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div id="over-modal-position">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">予約フォーム</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" style="padding-top: 20px;">
+                      <table class="table table-bordered">
+                        <thead class="thead_color">
+                        <tr>
+                          <th class="title-position">日付</th>
+                          <th class="title-position">予約時間</th>
+                          <th class="title-position">ご利用者様名</th>
+                          <th class="title-position">ご家族様名</th>
+                          <th class="title-position">メールアドレス</th>
+
+                        </tr>
+                        </thead>
+                        <%= f.fields_for "attendances[]", day do |at| %>
+                          <tbody>
+                          <tr>
+                            <td>
+                              <% if day.worked_on.wday == 0 %>
+                                <div class="sunday"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% elsif day.worked_on.wday == 6 %>
+                                <div class="saturday"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% else %>
+                                <div class="normal"><%= l(day.worked_on, format: :short1) %> (<%= $days_of_the_week[day.worked_on.wday] %>)</div>
+                              <% end %>
+                            </td>
+                            <td style="padding-top: 16px; font-size: 20px;">10:00</td>
+                            <%= at.hidden_field :reserve_time, :value => "10:00" %>
+                            <td style="padding-top: 16px; font-size: 20px;"></td>
+                            <td style="padding-top: 16px; font-size: 20px;"><%= current_user.name %></td>
+                            <td style="padding-top: 16px; font-size: 20px;"><%= current_user.email %></td>
+                            <%= at.hidden_field :reserve_check, :value => true %>
+                          </tr>
+                          </tbody>
+                        <% end %>
+                      </table>
+                    </div>
+                    <div id="notice-message">
+                      <p>
+                        <img src="https://zet-art.net/wp-content/uploads/2019/03/caution-01.png" alt="注意" width="40" height="40" border="0" />
+                        <% if day.reserve_time.present? %>
+                          予約後、登録メールアドレスに予約情報が送信されます。
+                        <% else %>
+                          予約確定後、登録メールアドレスに予約情報が送信されます。
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="over-modal-footer">
+                        <%= f.submit "予約を確定する", class: "btn btn-primary" %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
     </td>
     <td>
     </td>
@@ -193,3 +333,6 @@
     </td>
   </tr>
 <% end %>
+
+<!--残業申請ボタンのモーダルウインドウ表示-->
+<div id="overtime_application" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
