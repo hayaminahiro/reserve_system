@@ -1,67 +1,34 @@
 <% provide(:title, @user.name) %>
 <%= render 'header_info_table' %>
-<% if @user.id == current_user.id %>
-  <% if current_user.superior %>
-    <%= render 'users/notice' %>
-  <% end %>
-<% end %>
-<!--勤怠編集、CSV出力、勤怠修正ログのボタン-->
-<div class="csv-edit-button">
-  <% if @user.id == current_user.id %>
-    <%= link_to "勤怠を編集", edit_attendances_path(@user, @first_day), class: "btn btn-primary btn-primary" %>
-    <%= link_to "CSV出力", user_path(@user, first_day: @first_day, format: :csv), class: "btn btn-primary btn-primary" %>
-    <%= render 'show_log' %>
-  <% end %>
-</div>
+
 <table class="table table-striped table-bordered table-condensed table-hover user-table">
   <thead>
-    <tr>
-      <th rowspan="3">残業申請</th>
-      <th rowspan="3">日付</th>
-      <th rowspan="3">曜日</th>
-      <th colspan="8">実績</th>
-      <th colspan="8">所定外勤務</th>
-    </tr>
-    <tr>
-      <th colspan="3">出社</th>
-      <th colspan="3">退社</th>
-      <th rowspan="2">在社時間</th>
-      <th rowspan="2">備考</th>
-      <th colspan="2">終了予定時間</th>
-      <th rowspan="2">時間外時間</th>
-      <th rowspan="2">業務処理内容</th>
-      <th rowspan="2">指示者確認㊞</th>
-    </tr>
-    <tr>
-      <th>時</th>
-      <th>分</th>
-      <th></th> 
-      <th>時</th>
-      <th>分</th>
-      <th></th>
-      <th>時</th>
-      <th>分</th>
+    <tr style="background: #FFFFBB">
+      <th rowspan="3"><%= l(@first_day, format: :long) %></th>
+      <th>10:00</th>
+      <td>10:30</td>
+      <th>11:00</th>
+      <td>11:30</td>
+      <th>12:00</th>
+      <td>12:30</td>
+      <th>13:00</th>
+      <td>13:30</td>
+      <th>14:00</th>
+      <td>14:30</td>
+      <th>15:00</th>
+      <td>15:30</td>
+      <th>16:00</th>
+      <td>16:30</td>
+      <th>17:00</th>
+      <td>17:30</td>
+      <th>18:00</th>
     </tr>
   </thead>
   <tbody>
     <%= render 'show_body' %>
   </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="3"></td>
-      <!--format_basic_info　→　基本時間・指定勤務時間などをフォーマット化・・・Userヘルパー参照-->
-      <!--基本情報時間 basic_work_time（基本7.5h）-->
-      <!--str.to_f / 文字列の先頭から浮動小数点数と見なせる部分を切り取って変換 / 見なせる部分がなければ0.0を返す-->
-      <!--基本情報時間 * @worked_sum(出勤日数合計) = 総合勤務時間を format_basic_info でフォーマット化する-->
-      <td colspan="6">総合勤務時間 <%= format_basic_info(@user.basic_work_time).to_f * @worked_sum %>h</td>
-      <!--@total_secondsがnilでない場合、秒数単位の@total_secondsをworking_times_sumで勤務時間の合計数を出す-->
-      <!--working_times_sum：勤務時間の合計（attendanceヘルパー参照）-->
-      <td colspan="2">在社時間合計 <%= working_times_sum(@total_seconds.floor_to(15.minutes)) unless @total_seconds.nil? %>h</td>
-      <td colspan="4"></td>
-      <td>
-        <!--指定上長のShowページへ1ヶ月分の勤怠情報を送信-->
-        <%= render 'users/month_attendance_update' %>
-      </td>
-    </tr>
-  </tfoot>
+
 </table>
+
+<!--モーダルウインドウ表示-->
+<div id="reserve" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
