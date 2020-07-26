@@ -204,7 +204,8 @@ class AttendancesController < ApplicationController
 
     # 残業申請カラム
     def update_overtime_params
-      params.permit(attendances: [:reserve_time, :reserve_check])[:attendances]
+      params.permit(attendances: [:reserve_time, :reserve_time1030, :reserve_time1100, :reserve_time1130, :reserve_time1400,
+                                  :reserve_time1430, :reserve_time1500, :reserve_time1530, :reserve_check])[:attendances]
     end
 
     # 残業申請承認・否認の更新
