@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_25_135304) do
+ActiveRecord::Schema.define(version: 2020_07_26_031353) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -43,6 +43,13 @@ ActiveRecord::Schema.define(version: 2020_07_25_135304) do
     t.boolean "tomorrow_check_over", default: false
     t.string "reserve_time"
     t.boolean "reserve_check"
+    t.string "reserve_time1030"
+    t.string "reserve_time1100"
+    t.string "reserve_time1130"
+    t.string "reserve_time1400"
+    t.string "reserve_time1430"
+    t.string "reserve_time1500"
+    t.string "reserve_time1530"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 

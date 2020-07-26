@@ -38,6 +38,7 @@ textarea {
 
 .center.jumbotron{
   margin-top: 20px;
+  background: beige;
 }
 
 /* typography */
@@ -432,4 +433,34 @@ a.notice_radius {
 
 #head_user_color {
   color: #ff1493;
+}
+
+.hover a:hover {
+  background: mistyrose;
+}
+
+.contents-frame {
+  background-attachment: fixed;
+  background-image: url(/assets/679353_s.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  bottom: 90px;
+}
+
+.contents-frame::before {
+  background: inherit;
+  content: '';
+  filter: blur(3px);
+  //ぼかし効果決めて
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  left: -5px;
+  //最背面に指定
+  z-index: -1
 }
